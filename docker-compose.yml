@@ -1,6 +1,6 @@
 services:
   web:
-    image: gggu/gucraft:1 # Vous pouvez choisir une autre version de PHP si nécessaire (ex: 8.2-dev)
+    image: gggu/gucraft:2 # Vous pouvez choisir une autre version de PHP si nécessaire (ex: 8.2-dev)
     ports:
       - "8080:8080" # Vous pouvez changer le port hôte (8080) si besoin
     volumes:
@@ -19,9 +19,12 @@ services:
       CRAFT_DB_PASSWORD: db
     networks:
       - craft-network
+    restart: always
+    user: "1000:1000" 
 
   db:
-    image: gggu/gudb:1 # Vous pouvez choisir une autre version de PostgreSQL
+    image: postgres:16 # Vous pouvez choisir une autre version de PostgreSQL
+    platform: linux/riscv64
     ports:
       - "5432:5432"
     environment:
@@ -32,6 +35,8 @@ services:
       - ./data:/var/lib/postgresql/data
     networks:
       - craft-network
+    restart: always
+    user: "1000:1000" 
 
   # console:
   #   image: craftcms/cli:8.1-dev # Assurez-vous que la version correspond à celle de 'web'

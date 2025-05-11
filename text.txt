@@ -27,3 +27,49 @@ docker exec -u root 3721c310d8eb55471e0f4961f5f03024a70caf0dac9dbb87754c7ab0d1b9
 
 sudo chown -R www-data:www-data /app/config/project
 sudo chmod -R u+w /app/config/project
+
+
+
+
+
+
+//dockervps
+
+sudo apt update
+sudo apt install ca-certificates curl gnupg
+
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt update
+sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+sudo docker run hello-world
+
+sudo usermod -aG docker $USER
+
+
+
+
+ssh/////
+
+eeeeeeeeeeeeeee il faut redemarere ou reinstaller
+
+sudo rm /root/.ssh/id_ed25519.pub /root/.ssh/id_ed25519 
+sudo ssh-keygen -f "/root/.ssh/known_hosts" -R "62.210.93.77"
+
+sudo ssh-keygen -t ed25519
+sudo ls -al /root/.ssh/
+sudo cat /root/.ssh/id_ed25519.pub
+
+sudo ssh root@62.210.93.77 /root/.ssh/id_ed25519
+OU
+sudo ssh root@62.210.93.77
+OU
+ssh -i /root/.ssh/id_ed25519 root@62.210.93.77
