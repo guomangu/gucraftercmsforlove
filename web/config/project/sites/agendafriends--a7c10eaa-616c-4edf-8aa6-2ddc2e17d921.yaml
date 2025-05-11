@@ -1,0 +1,9 @@
+baseUrl: null
+enabled: true
+handle: agendafriends
+hasUrls: false
+language: fr
+name: agendafriends
+primary: true
+siteGroup: 8a6cd0b3-d0ff-4c2b-9142-ff50b5cf8a16 # a
+sortOrder: 2

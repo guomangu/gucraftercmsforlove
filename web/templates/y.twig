@@ -1,0 +1,115 @@
+
+{% block content %}
+    
+{% set inscrit = craft.entries()
+.section('inscrit')
+.relatedTo({
+    targetElement: obj,
+    field: 'obj'
+})
+.limit(27)
+.all() %}
+
+
+
+
+
+
+
+<div class="d-flex flex-wrap justify-content-center align-items-start gap-3">
+    <form method="post" 
+        class="add-action-form p-4 border rounded bg-light mb-5" 
+        accept-charset="UTF-8" 
+        enctype="multipart/form-data">
+        {{ csrfInput() }}
+        {{ actionInput('guest-entries/save') }}
+        {{ hiddenInput('sectionId', 13) }} 
+        {{ hiddenInput('enabled', '1') }} 
+        <input type="hidden" name="fields[obj][]" value="{{ obj.id }}">
+        <input type="hidden" name="fields[gens][]" value="{{ user.id }}">
+        <input type="text" name="title" placeholder="Ajouter un message d'incription" class="form-control form-control-sm mb-2" required>
+    
+        <button type="submit" class="btn btn-primary btn-sm w-100 mt-2 d-inline-flex align-items-center justify-content-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg me-1" viewBox="0 0 16 16">
+                <path d="M13.485 1.343a1.5 1.5 0 0 1 2.121 2.121l-11 11a1.5 1.5 0 0 1-2.121-2.121l11-11z"/>
+                <path d="M4.5 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5z"/>
+            </svg>
+            S'inscrire a l'Activité 
+        </button>
+    </form> {# Fin du formulaire d'inscription #}
+
+
+
+
+
+    
+    {# Boucle sur chaque personne inscrite dans le groupe #}
+    {% for abo in inscrit %}
+        {# Bloc pour une personne (image + nom) #}
+        <div class="text-center border-danger" style="max-width: 136px;"> {# Largeur fixe pour contrôler l'espacement #}
+
+            {# Récupération de l'image #}
+            {% set image = abo.gens[0].img.one() %}
+
+            {# Condition pour afficher l'image ou le placeholder #}
+            {% if image %}
+                {# Affichage de l'image en bulle #}
+                <img src="{{ image.getUrl({width: 120, height: 120, mode: 'crop', quality: 80}) }}" {# Taille source un peu plus grande #}
+                     alt="Photo de {{ abo.gens[0].title }}" {# Texte alternatif descriptif #}
+                     class="rounded-circle shadow-sm mb-1 mx-auto d-block" {# Bulle + Ombre légère + Marge en bas + Centrage #}
+                     style="width: 60px; height: 60px; object-fit: cover; background-color: #f8f9fa;" {# Taille fixe + Remplissage + Fond clair si image transparente #}
+                     loading="lazy"> {# Chargement différé pour les images #}
+            {% else %}
+                {# Placeholder si pas d'image : icône dans un cercle #}
+                <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center shadow-sm mb-1 mx-auto"
+                     style="width: 60px; height: 60px;"
+                     title="Pas d'image pour {{ abo.gens[0].title }}"> {# Tooltip indiquant l'absence d'image #}
+                     {# Icône Bootstrap (Personne) #}
+                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
+                        <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                     </svg>
+                </div>
+            {% endif %}
+
+            {# Affichage du nom sous la bulle #}
+            <p class="mb-0 small" style="line-height: 1.2; overflow-wrap: break-word;"> {# Texte petit, marge bas nulle, hauteur de ligne réduite, gestion des mots longs #}
+                {{ abo.gens[0].title }}
+            </p>
+            <p class="mb-0 small btn btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#abo-activ-{{ abo.id }}" aria-expanded="false" aria-controls="#abo-activ-{{ abo.id }}" style="line-height: 1.2; overflow-wrap: break-word;"> {# Texte petit, marge bas nulle, hauteur de ligne réduite, gestion des mots longs #}
+                {{ abo.title }}
+
+                {# <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#abo-{{ abo.id }}" aria-expanded="false" aria-controls="#abo-{{ abo.id }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>  
+                    </svg>
+                </button> #}
+            </p>
+
+        </div>
+
+    {% else %}
+        {# Message si aucune personne n'est inscrite #}
+        <p class="text-muted fst-italic">Aucune personne inscrite pour le moment.</p>
+
+    {% endfor %} {# Fin de la boucle sur les personnes #}
+
+    {% for abo in inscrit %}
+        <div class="collapse" id="abo-activ-{{ abo.id }}">
+            {# Affichage de la description de l'abonnement #}
+            {% include "d.twig" with {
+                obj: abo,
+                user: user
+            } %}
+        </div>
+    {% endfor %}
+
+ 
+</div> {# Fin du conteneur flex #}
+
+{# --- Fin de la section d'affichage des abonnements --- #}
+
+
+
+
+{% endblock %}

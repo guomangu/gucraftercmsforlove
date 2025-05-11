@@ -1,0 +1,15 @@
+{% set descs = craft.entries()
+.section('desc')
+.relatedTo({
+    targetElement: obj,
+    field: 'universel'
+})
+.limit(27)
+.all() %}
+
+
+<span>
+    <small class="text-muted">
+        {{ descs|length }} messages
+    </small>
+</span>

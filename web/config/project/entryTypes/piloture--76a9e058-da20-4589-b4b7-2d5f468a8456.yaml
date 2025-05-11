@@ -1,0 +1,83 @@
+color: null
+fieldLayouts:
+  b0578ac2-ef46-49c2-972d-6f91f8c93d32:
+    tabs:
+      -
+        elementCondition: null
+        elements:
+          -
+            autocapitalize: true
+            autocomplete: false
+            autocorrect: true
+            class: null
+            dateAdded: '2025-04-01T22:14:15+00:00'
+            disabled: false
+            elementCondition: null
+            id: null
+            includeInCards: false
+            inputType: null
+            instructions: null
+            label: null
+            max: null
+            min: null
+            name: null
+            orientation: null
+            placeholder: null
+            providesThumbs: false
+            readonly: false
+            required: false
+            size: null
+            step: null
+            tip: null
+            title: null
+            type: craft\fieldlayoutelements\entries\EntryTitleField
+            uid: 8ca1b36f-a964-4595-92be-2b58933f02d3
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-04-01T22:16:35+00:00'
+            elementCondition: null
+            fieldUid: 5c005119-58f0-4eee-ad8c-32984a2686c3 # pilotes
+            handle: null
+            includeInCards: false
+            instructions: null
+            label: null
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: b43243c6-1a8a-4a4b-b159-06ecdd900e2a
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-04-01T22:16:35+00:00'
+            elementCondition: null
+            fieldUid: f292de92-c1b2-45c5-8734-0371f823f9cb # voitures
+            handle: null
+            includeInCards: false
+            instructions: null
+            label: null
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: 3c60116c-e43b-44f7-9a26-8d139c4aa305
+            userCondition: null
+            warning: null
+            width: 100
+        name: Content
+        uid: f2a0b907-b5f8-469c-83a8-86c4af482606
+        userCondition: null
+handle: piloture
+hasTitleField: true
+icon: null
+name: piloture
+showSlugField: true
+showStatusField: true
+slugTranslationKeyFormat: null
+slugTranslationMethod: site
+titleFormat: null
+titleTranslationKeyFormat: null
+titleTranslationMethod: site

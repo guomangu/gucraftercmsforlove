@@ -1,0 +1,28 @@
+defaultPlacement: end
+enableVersioning: true
+entryTypes:
+  -
+    uid: 412d2b65-92f7-40dc-8dbf-e495840944c4 # Voitures standard
+handle: voitures
+maxAuthors: 1
+name: voitures
+previewTargets:
+  -
+    __assoc__:
+      -
+        - label
+        - 'Primary entry page'
+      -
+        - urlFormat
+        - '{url}'
+      -
+        - refresh
+        - '1'
+propagationMethod: all
+siteSettings:
+  03e942c5-fa2f-4d2a-b7e5-52766f07b3b2: # a
+    enabledByDefault: true
+    hasUrls: true
+    template: voitures/_entry.twig
+    uriFormat: 'voitures/{slug}'
+type: channel

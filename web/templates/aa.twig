@@ -1,0 +1,72 @@
+{% block content %}
+{# Si l'utilisateur est connecté, récupérer ses informations #}
+{% set emailDepuisCookie = craft.app.session.get('loggedInGensId') %}
+
+{# Vérifier si l'utilisateur est connecté #}
+{% if emailDepuisCookie is not null %}
+    {# L'utilisateur est connecté, vous pouvez afficher ses informations #}
+    {% set user = craft.entries().id(emailDepuisCookie).one() %}
+{% else %}
+    {# L'utilisateur n'est pas connecté, afficher un message ou rediriger #}
+    {# <p><strong>Aucun utilisateur connecté.</strong></p> #}
+    {% set user = craft.entries().id(257).one() %}
+{% endif %}
+
+
+{% set msg = craft.entries()
+        .section('msg')
+        .relatedTo({
+            targetElement: obj,
+            field: 'universel'
+        })
+        .orderBy('dateCreated DESC')
+        .limit(5)
+        .all() %}
+
+{% if msg|length != 0 %}
+    <div style="text-align:center;">  
+        {% for ms in msg %}
+            <div class="card card-body m-5 border-danger">
+                <p text-muted>Informations:</p>
+                <h5>{{ms.title}}</h5>
+                <p text-muted>
+                    {{ms.gens[0].title}} 
+                    "Administrateur de
+                        {% if obj.sectionId == 12 %}
+                            <span>cet Agenda<span>
+                        {% elseif obj.sectionId == 7 %}
+                            <span>ce Club<span>
+                        {% elseif obj.sectionId == 15 %}
+                            <span>cet Activité<span>
+                        {% endif %}"
+                </p>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+
+{% if user.id == obj.gensadmin[0].id %}
+    <form method="post" 
+        class="add-action-form p-4 border rounded bg-light mb-5" 
+        accept-charset="UTF-8" 
+        enctype="multipart/form-data">
+        {{ csrfInput() }}
+        {{ actionInput('guest-entries/save') }}
+        {{ hiddenInput('sectionId', 11) }} 
+        {{ hiddenInput('enabled', '1') }} 
+        <input type="hidden" name="fields[universel][]" value="{{ obj.id }}" required>
+        <input type="hidden" name="fields[gens][]" value="{{ user.id }}" required>
+        <input type="text" name="title" placeholder="Ajouter un message informatif" class="form-control form-control-sm mb-2" required>
+    
+        <button type="submit" class="btn btn-danger btn-sm w-100 mt-2 d-inline-flex align-items-center justify-content-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg me-1" viewBox="0 0 16 16">
+                <path d="M13.485 1.343a1.5 1.5 0 0 1 2.121 2.121l-11 11a1.5 1.5 0 0 1-2.121-2.121l11-11z"/>
+                <path d="M4.5 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5z"/>
+            </svg>
+            Donner un informations Important
+        </button>
+    </form>
+{% endif %}
+
+{% endblock %}

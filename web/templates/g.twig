@@ -1,0 +1,218 @@
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+
+{% block content %}
+
+{# -- Conteneur Principal -- #}
+<div class="container mt-4 mb-5">
+
+    {# -- Section Informations Utilisateur -- #}
+    {% set emailDepuisCookie = craft.app.session.get('loggedInGensId') %}
+    {% if emailDepuisCookie is not null %}
+        {% set user = craft.entries().id(emailDepuisCookie).one() %}
+        {# Vérifier si l'utilisateur a bien été trouvé #}
+        {% if user %}
+            <div class="row align-items-center mb-5 p-4 rounded">
+                <div class="col-md-3 text-center text-md-start mb-3 mb-md-0">
+                    {# Affichage de l'image utilisateur en cercle #}
+                    {% set userImage = user.img.one() %}
+                    {% if userImage %}
+                        <img src="{{ userImage.getUrl({width: 200, height: 200, mode: 'crop', quality: 80}) }}" 
+                             alt="Photo de {{ user.title }}" 
+                             class="img-fluid rounded-circle shadow" 
+                             style="width: 150px; height: 150px; object-fit: cover;">
+                    {% else %}
+                        {# Placeholder Icône si pas d'image #}
+                        <div class="rounded-circle bg-secondary text-white d-inline-flex align-items-center justify-content-center shadow mx-auto" 
+                             style="width: 150px; height: 150px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
+                                <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                            </svg>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="col-md-9 text-center text-md-start">
+                    <h1 class="display-5">{{ user.title }}</h1>
+                    <p class="lead text-muted">{{ user.email }}</p>
+                    {# Vous pouvez ajouter d'autres infos utilisateur ici si nécessaire #}
+                    {# <p><small>ID: {{ user.id }}</small></p> #}
+                </div>
+            </div>
+
+            {# -- Section Liste des Groupes (Agendas) -- #}
+            <h2 class="mb-4">Mes Agendas</h2>
+            {% set latestgroupe = craft.entries()
+                .section('groupe')
+                .relatedTo({ targetElement: user, field: 'gensinscrit' })
+                .orderBy('dateCreated DESC')
+                .limit(10)
+                .all() %}
+
+            {% if latestgroupe is not empty %}
+                {# Utilisation de la grille Bootstrap pour afficher les cartes #}
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5">
+                    {% for g in latestgroupe %}
+                        <div class="col">
+                            {# Chaque groupe est une carte cliquable #}
+                            <div class="card h-100 shadow-sm lift"> 
+                                <a href="{{ siteUrl }}m/{{ g.id }}" class="stretched-link text-decoration-none text-dark"></a> {# Lien invisible qui couvre la carte #}
+                                
+                                {# Image du groupe en haut de la carte #}
+                                {% set groupImage = g.img.one() %}
+                                {% if groupImage %}
+                                    <img src="{{ groupImage.getUrl({width: 400, height: 250, mode: 'crop', quality: 75}) }}" 
+                                         class="card-img-top" 
+                                         alt="{{ groupImage.alt ?? groupImage.title ?? g.title }}"
+                                         style="height: 200px; object-fit: cover;">
+                                {% else %}
+                                    {# Placeholder si pas d'image de groupe #}
+                                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center text-muted" 
+                                         style="height: 200px;">
+                                         <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-calendar-week" viewBox="0 0 16 16">
+                                           <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-5 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z"/>
+                                           <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+                                         </svg>
+                                    </div>
+                                {% endif %}
+
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title">{{ g.title }}</h5>
+                                    <p class="card-text small text-muted mb-2">
+                                        {{ g.art }} <br>
+                                        Zone: {{ g.zone }}
+                                    </p>
+                                    
+                                    {# Section Membres (bulles) #}
+                                    <div class="mt-auto pt-3 border-top"> {# Aligne en bas, ajoute espace et bordure #}
+                                        <h6 class="card-subtitle mb-2 text-muted small">Membres :</h6>
+                                        <div class="d-flex flex-wrap justify-content-start gap-2"> {# Ajustement du gap et justification #}
+                                            {% set members = g.gensinscrit.limit(5).all() %} {# Limiter pour l'aperçu #}
+                                            {% for gens in members %}
+                                                <div class="text-center" title="{{ gens.title }}"> {# Tooltip avec le nom #}
+                                                    {% set memberImage = gens.img.one() %}
+                                                    {% if memberImage %}
+                                                        <img src="{{ memberImage.getUrl({width: 60, height: 60, mode: 'crop', quality: 75}) }}" 
+                                                             alt="{{ gens.title }}" 
+                                                             class="rounded-circle shadow-sm" 
+                                                             style="width: 30px; height: 30px; object-fit: cover;" 
+                                                             loading="lazy">
+                                                    {% else %}
+                                                        <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center shadow-sm" 
+                                                             style="width: 30px; height: 30px; font-size: 0.7rem;">
+                                                             {# Initials ou icône simple #}
+                                                             {{ gens.title|slice(0, 1)|upper }}
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            {% endfor %}
+                                            {# Indication s'il y a plus de membres #}
+                                            {% if g.gensinscrit.count() > 5 %}
+                                                <div class="rounded-circle bg-light text-muted d-flex align-items-center justify-content-center" 
+                                                     style="width: 30px; height: 30px; font-size: 0.7rem;"
+                                                     title="{{ g.gensinscrit.count() - 5 }} autres membres">
+                                                    +{{ g.gensinscrit.count() - 5 }}
+                                                </div>
+                                            {% endif %}
+                                            {# Message si aucun membre (ne devrait pas arriver si user est inscrit ?) #}
+                                            {% if g.gensinscrit.count() == 0 %}
+                                                 <small class="text-muted fst-italic">Aucun membre.</small>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div> {# Fin Card Body #}
+                            </div> {# Fin Card #}
+                        </div> {# Fin Col #}
+                    {% endfor %}
+                </div> {# Fin Row (Grille de cartes) #}
+            {% else %}
+                <div class="alert alert-info" role="alert">
+                  Vous ne possedez aucun agenda pour le moment.
+                </div>
+            {% endif %}
+
+            {% include "h.twig" with {
+                user: user
+            } %}
+
+            {# -- Section Formulaire de création -- #}
+            <hr class="my-5"> {# Séparateur horizontal avec marge verticale #}
+
+            <div class="row justify-content-center">
+                <div class="col-lg-8"> {# Limiter la largeur du formulaire sur grands écrans #}
+                    <h2 class="mb-4">Créer un nouvel Agenda</h2>
+                    <div class="card shadow-sm">
+                        <div class="card-body p-4">
+                            <form method="post" accept-charset="UTF-8" enctype="multipart/form-data">
+                                {{ csrfInput() }}
+                                {{ actionInput('guest-entries/save') }}
+                                {{ hiddenInput('sectionId', 12) }} {# Assurez-vous que 12 est le bon ID #}
+                                {{ hiddenInput('enabled', '1') }}
+                                {# Assigner l'utilisateur courant comme admin ET inscrit initial #}
+                                {{ hiddenInput('fields[gensadmin][]', user.id) }}
+                                {{ hiddenInput('fields[gensinscrit][]', user.id) }}
+
+                                <div class="mb-3">
+                                    <label for="title" class="form-label">Titre de l'Agenda :</label>
+                                    <input id="title" type="text" name="title" class="form-control" required placeholder="Ex: Réunion Projet Alpha">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="field-art" class="form-label">Description :</label> {# ID ajouté pour correspondre au label si besoin #}
+                                    <textarea id="field-art" name="fields[art]" class="form-control" rows="3" required placeholder="Courte description de l'objectif ou du contenu de l'agenda..."></textarea> {# Utilisation de textarea pour description plus longue #}
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="field-zone" class="form-label">Zone / Lieu :</label> {# ID ajouté #}
+                                    <input id="field-zone" type="text" name="fields[zone]" class="form-control" required placeholder="Ex: Salle de conférence B, En ligne (Teams), etc.">
+                                </div>
+
+                                <div class="mb-4"> {# Marge un peu plus grande avant le bouton #}
+                                    <label for="img" class="form-label">Image de couverture :</label>
+                                    <input id="img" type="file" name="fields[img]" class="form-control" accept="image/*"> {# Accepter seulement les images #}
+                                    <div class="form-text">Optionnel. Une image représentative pour cet agenda.</div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary btn-lg d-inline-flex align-items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle-fill me-2" viewBox="0 0 16 16">
+                                      <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z"/>
+                                    </svg>
+                                    Créer l'Agenda
+                                </button>
+                            </form>
+                        </div> {# Fin Card Body Formulaire #}
+                    </div> {# Fin Card Formulaire #}
+                </div> {# Fin Col Formulaire #}
+            </div> {# Fin Row Formulaire #}
+
+        {% else %}
+            {# Cas où l'ID utilisateur du cookie n'existe plus/pas #}
+             <div class="alert alert-warning" role="alert">
+               Impossible de charger les informations utilisateur. Veuillez vous reconnecter. 
+               {# Mettre un lien de connexion ici #}
+               {# <a href="/login" class="alert-link">Se connecter</a> #}
+             </div>
+        {% endif %}
+    {% else %}
+        {# -- Message si Utilisateur non connecté -- #}
+        <div class="alert alert-info text-center" role="alert">
+            <h4 class="alert-heading">Bienvenue !</h4>
+            <p>Creez un compte pour voir vos agendas et en créer de nouveaux.</p>
+            <hr>
+            <a href="/c" class="btn btn-primary">Creer son compte</a> {# Mettez votre URL de connexion #}
+            {# Ou <a href="/register" class="btn btn-secondary">S'inscrire</a> #}
+        </div>
+    {% endif %}
+
+</div> {# -- Fin Conteneur Principal -- #}
+
+{# Effet de "lift" simple au survol pour les cartes #}
+<style>
+    .lift:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+</style>
+
+{% endblock %}

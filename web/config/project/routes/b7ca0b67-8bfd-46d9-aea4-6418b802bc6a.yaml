@@ -1,0 +1,9 @@
+siteUid: null
+sortOrder: 5
+template: f.twig
+uriParts:
+  - f/
+  -
+    - number
+    - \d+
+uriPattern: 'f/<number:\d+>'

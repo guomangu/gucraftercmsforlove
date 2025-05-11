@@ -1,0 +1,52 @@
+
+
+{% block content %}
+
+
+<form method="post" accept-charset="UTF-8" enctype="multipart/form-data">
+        {{ csrfInput() }} {# Important pour la sécurité CSRF #}
+        {# {{ actionInput('entries/save-entry') }} #} {# Action Craft pour sauvegarder #}
+        {{ actionInput('guest-entries/save') }}
+        {{ redirectInput('users?success=1') }} {# Redirige vers cette même page après succès (optionnel) #}
+        {{ hiddenInput('sectionId', 3) }} {# ID de la section où sauvegarder #}
+        
+        {# {{ hiddenInput('enabled', '1') }} Pour publier l'entrée directement (sinon, elle est sauvegardée comme brouillon) #}
+        {# Si vous n'avez qu'un seul type d'entrée, ce n'est pas strictement nécessaire, mais c'est plus sûr : #}
+        {# {{ hiddenInput('entryTypeId', craft.sections.getSectionByHandle('voitures').getEntryTypes()[0].id) }} #}
+
+
+        {# Champ Titre (si vous ne le générez pas automatiquement) #}
+        <label for="title">Titre:</label>
+        <input id="title" type="text" name="title" value="{{ entry.title ?? '' }}" required><br>
+
+        {# Champs personnalisés - IMPORTANT: utilisez fields[handleDuChamp] #}
+        <label for="marque">Mail:</label>
+        <input id="marque" type="mail" name="fields[mail]" value="{{ entry.mail ?? '' }}" required>
+        {# Affiche l'erreur spécifique pour ce champ s'il y en a une #}
+        {% if entry is defined and entry.hasErrors('marque') %}<span class="error">{{ entry.getFirstError('marque') }}</span>{% endif %}
+        <br>
+
+        <label for="photoVoiture">Password:</label>
+        <input id="photoVoiture" type="password" name="fields[pass]" required>
+        {# La gestion des erreurs pour les fichiers est un peu plus complexe #}
+        <br>
+
+        <button type="submit">Ajouter la voiture</button>
+    </form>
+
+    {% if entry is defined and entry.hasErrors() %}
+        <div class="error">
+            <p>Il y a des erreurs dans le formulaire :</p>
+            {% for attribute, errors in entry.getErrors() %}
+                {% for error in errors %}
+                    <p class="error">{{ attribute }}: {{ error }}</p>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if success is defined and success == 1 %}
+        <p class="success">user ajoutée avec succès !</p>
+    {% endif %}
+
+{% endblock %}

@@ -1,0 +1,18 @@
+{% block content %}
+
+  
+<div class="card card-body m-5">
+<form method="post" id="aadgr" class="add-action-form m-3" accept-charset="UTF-8" enctype="multipart/form-data">
+        {{ csrfInput() }}
+        {{ actionInput('guest-entries/save') }}
+        {{ hiddenInput('sectionId', 12) }} {# Assurez-vous que 7 est le bon ID de section #}
+        {{ hiddenInput('enabled', '1') }}
+        {# Assurez-vous que 'mom' est disponible et a un 'id' #}
+        <input type="hidden" name="fields[gensadmin][]" value="{{ user.id }}" required>
+
+        <input type="text" name="title" class="form-control" placeholder="Nom de l'agenda" required> {# Champ texte pour l'inscription #}
+        {# Bouton plus petit (btn-sm) et pleine largeur (w-100) pour un accès facile sur mobile #}
+        <button type="submit" class="btn btn-dark btn-sm w-100 mt-2">Creer votre Agenda.</button>
+    </form>
+</div>
+{% endblock %}

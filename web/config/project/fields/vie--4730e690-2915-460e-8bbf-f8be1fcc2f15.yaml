@@ -1,0 +1,27 @@
+columnSuffix: null
+handle: vie
+instructions: null
+name: vie
+searchable: false
+settings:
+  allowSelfRelations: false
+  branchLimit: null
+  defaultPlacement: end
+  maintainHierarchy: false
+  maxRelations: null
+  minRelations: null
+  selectionLabel: null
+  showCardsInGrid: false
+  showSiteMenu: false
+  showUnpermittedEntries: false
+  showUnpermittedSections: false
+  sources:
+    - 'section:6b58fdbf-150e-4d17-9afa-ee8bfb0baed9' # Action
+    - 'section:4c349411-fa69-445e-8af6-d6c9028b1530' # Activite
+    - 'section:778b148a-6bcf-4d14-998f-6db6d6dc01fc' # Groupe
+  targetSiteId: null
+  validateRelatedElements: false
+  viewMode: list
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\Entries

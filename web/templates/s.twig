@@ -1,0 +1,179 @@
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+{# Afficher les messages de succès ou d'erreur après soumission #}
+{% if craft.app.session.hasFlash('notice') %}
+    <div class="alert alert-success">{{ craft.app.session.getFlash('notice') }}</div>
+{% endif %}
+{% if craft.app.session.hasFlash('error') %}
+    <div class="alert alert-danger">{{ craft.app.session.getFlash('error') }}</div>
+{% endif %}
+
+{# Si l'utilisateur est connecté, récupérer ses informations #}
+{% set emailDepuisCookie = craft.app.session.get('loggedInGensId') %}
+
+{# Vérifier si l'utilisateur est connecté #}
+{% if emailDepuisCookie is not null %}
+    {# L'utilisateur est connecté, vous pouvez afficher ses informations #}
+    {% set user = craft.entries().id(emailDepuisCookie).one() %}
+{# {% else %} #}
+    {# <p><strong>Aucun utilisateur connecté.</strong></p>
+    {% set user = craft.entries().id(257).one() %} #}
+{% endif %}
+
+
+
+
+
+{% block content %}
+<div class="container"> {# Conteneur principal avec marges verticales #}
+    <div class="mb-3">
+        <label for="user-search-input" class="form-label">Rechercher des tags</label>
+        <div class="input-group">
+            <input type="search" 
+                   id="user-search-input" 
+                   placeholder="Entrez un tag" 
+                   class="form-control sea" {# Gardé votre classe 'sea' si elle a un usage spécifique #}
+                   aria-label="Champ de recherche tags" 
+                   aria-describedby="button-search-addon"
+                   {# Note: Ce champ déclenche généralement une recherche JS pour peupler le select ci-dessous #}
+                   {# Vous n'avez peut-être pas besoin d'un attribut 'name' ici si la recherche est purement JS #}
+                   {# name="query_search" #} 
+                   />
+            <button class="btn btn-outline-secondary" type="button" id="button-search-addon">
+                {# Icône de recherche Bootstrap Icons #}
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                </svg>
+            </button>
+        </div>
+        <div id="user-search-help" class="form-text">Tapez pour rechercher, les résultats apparaîtront ci-dessous.</div>
+    </div>
+
+    {# Champ Select pour choisir l'utilisateur trouvé #}
+    <div class="mb-3">
+        <label for="recois_id_pilote" class="form-label">moments trouvé</label>
+        <div class="recois_id_pilote" id="recois_id_pilote">
+            {# Ce conteneur sera rempli par le JS avec les résultats de recherche #}
+            {# Vous pouvez ajouter une classe ou un ID pour le styliser si nécessaire #}
+        </div>
+        {# Vous pouvez ajouter un message d'erreur ici en cas de besoin #}
+        
+        <div class="invalid-feedback">Veuillez sélectionner un tag.</div>
+
+        <form method="post" id="s-form" class="card card-body" accept-charset="UTF-8">
+            {{ csrfInput() }} {# Important pour la sécurité CSRF #}
+            {{ actionInput('guest-entries/save') }}
+            {{ hiddenInput('enabled', '1') }}
+            {{ hiddenInput('sectionId', 10) }}
+            <input type="hidden" id="titile" name="title" required> {# ID du groupe #}
+            <input type="hidden" name="fields[gens][]" value="{{user.id}}" required>
+            {# Bouton de soumission #}
+            <button type="submit" class="btn btn-secondary d-inline-flex align-items-center">
+                {# Icône d'invitation Bootstrap Icons #}
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-plus-fill me-2" viewBox="0 0 16 16">
+                <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                <path fill-rule="evenodd" d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z"/>
+                </svg>
+                Rechercher ce tag
+                <div id="confirm"></div>
+            </button>
+        </form> 
+    </div>
+</div> {# Fin du conteneur principal #}
+
+
+
+
+    
+<div class="mb-3">
+ {% include "t.twig" with {
+        user:user
+    } %}
+</div>
+
+
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+    const searchInputs = document.querySelectorAll('.sea'); // Sélectionner TOUS les inputs avec l'ID 'sea'
+
+    searchInputs.forEach(searchInput => { // Ajouter un écouteur d'événements à chaque input
+        searchInput.addEventListener('input', function() {
+            const query = this.value; // 'this' fait référence à l'input 'sea' actuel
+            if (query.length < 1) {return}; // Ne pas effectuer la recherche si moins de 3 caractères{
+                
+            const form = this.closest('form'); // Remonter dans le DOM pour trouver le formulaire parent le plus proche
+            const resultContainer = document.querySelector('.recois_id_pilote'); // Sélectionner le select DANS ce formulaire
+
+            // Effectuer une requête AJAX pour récupérer les résultats de recherche
+            fetch('/index.php?action=graphql/api', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    query: `
+                        query MyQuery {
+                            tagEntries(search: "`+query+`", limit:12, orderBy: "dateCreated DESC") {
+                                ... on tag_Entry {
+                                    id
+                                    title
+                                    status
+                                    groupe {
+                                        id
+                                        title
+                                    }
+                                }
+                            }
+                        }
+
+                    `
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data); // Afficher la réponse dans la console pour le débogage
+                
+                // Traiter les résultats de la recherche et mettre à jour le conteneur de résultats
+                const results = data.data.tagEntries;
+                resultContainer.innerHTML = ''; // Vider le conteneur avant d'ajouter les nouveaux résultats
+
+                results.forEach(entry => {
+                    // creer des carte pour chaque entrée trouvée
+                    const dive = document.createElement('div');
+                    dive.className = 'card mb-2'; // Ajouter une classe pour le style
+                    if (entry.groupe.length > 0) {
+                        dive.innerHTML = `
+                            <div class="card-body">
+                                <h5 class="card-title">`+entry.title+`</h5>
+                                <p class="card-text">Groupe: `+entry.groupe[0].title+`</p>
+                                <button class="btn btn-primary" name="titittitlre" value="`+entry.title+`" onClick='addauform("`+ entry.title +`")'>Ajouter</button>
+                            </div>
+                        `;
+                    }
+                    resultContainer.appendChild(dive); // Ajouter la carte au conteneur de résultats
+                });
+            })
+            .catch(error => console.error('Erreur lors de la recherche :', error));
+        });
+    });
+});
+
+function addauform(params) {
+    // ajouter param auchamps titile
+    var input = document.getElementById('titile'); // Sélectionner le champ caché par son ID
+    input.value = params; // Mettre à jour la valeur du champ caché avec le paramètre passé
+    console.log("Valeur ajoutée au champ caché : " + params); // Afficher la valeur ajoutée dans la console pour le débogage
+
+
+    const dive = document.createElement('span');
+    dive.className = 'btn'; // Ajouter une classe pour le style
+    dive.innerHTML = params;
+
+    const resultContainer2 = document.querySelector('#confirm');
+    resultContainer2.innerHTML = ''; // Vider le conteneur avant d'ajouter les nouveaux résultats
+    resultContainer2.appendChild(dive); // Ajouter la carte au conteneur de résultats
+}
+</script>
+
+{% endblock %}

@@ -1,0 +1,29 @@
+{% block content %}
+
+{% set inscrit = craft.entries()
+.section('inscrit')
+.relatedTo({
+    targetElement: activ,
+    field: 'obj'
+})
+.limit(27)
+.all() %}
+
+
+<span>
+    {% if activ.sectionId == 7 %}
+        <small class="text-muted">
+            {{ inscrit|length }} addherents
+        </small>
+    {% elseif activ.sectionId == 15 %}
+        <small class="text-muted">
+            {{ inscrit|length }} inscrits
+        </small>
+    {% elseif activ.sectionId == 12 %}
+        <small class="text-muted">
+            {{ inscrit|length }} membres
+        </small>
+    {% endif %}
+</span> 
+
+{% endblock %}

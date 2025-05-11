@@ -1,0 +1,28 @@
+defaultPlacement: end
+enableVersioning: true
+entryTypes:
+  -
+    uid: 2b274626-6d0d-426b-87d0-0f38b76388bd # pilogens
+handle: pilogens
+maxAuthors: 1
+name: pilogens
+previewTargets:
+  -
+    __assoc__:
+      -
+        - label
+        - 'Primary entry page'
+      -
+        - urlFormat
+        - '{url}'
+      -
+        - refresh
+        - '1'
+propagationMethod: all
+siteSettings:
+  03e942c5-fa2f-4d2a-b7e5-52766f07b3b2: # a
+    enabledByDefault: true
+    hasUrls: true
+    template: pilogens/_entry.twig
+    uriFormat: 'pilogens/{slug}'
+type: channel

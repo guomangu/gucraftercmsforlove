@@ -1,0 +1,6 @@
+siteUid: null
+sortOrder: 7
+template: liste-voitures.twig
+uriParts:
+  - voitures
+uriPattern: voitures

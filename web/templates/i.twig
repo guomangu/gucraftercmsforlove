@@ -1,0 +1,186 @@
+
+{# Afficher les messages de succès ou d'erreur après soumission #}
+{% if craft.app.session.hasFlash('notice') %}
+    <div class="alert alert-success">{{ craft.app.session.getFlash('notice') }}</div>
+{% endif %}
+{% if craft.app.session.hasFlash('error') %}
+    <div class="alert alert-danger">{{ craft.app.session.getFlash('error') }}</div>
+{% endif %}
+
+{% block content %}
+
+{# Si l'utilisateur est connecté, récupérer ses informations #}
+{% set emailDepuisCookie = craft.app.session.get('loggedInGensId') %}
+
+{# Vérifier si l'utilisateur est connecté #}
+{% if emailDepuisCookie is not null %}
+    {# L'utilisateur est connecté, vous pouvez afficher ses informations #}
+    {% set user = craft.entries().id(emailDepuisCookie).one() %}
+{% else %}
+     {% set user = craft.entries().id(257).one() %}
+    {# <p><strong>Aucun utilisateur connecté.</strong></p> #}
+{% endif %}
+
+
+
+{% set inscrit = craft.entries()
+.section('inscrit')
+.relatedTo({
+    targetElement: act,
+    field: 'obj'
+})
+.dt(dt|date('Y-m-d'))
+.limit(27)
+.all() %}
+
+{# -- Liste des Inscriptions -- #}
+    <h4 class="mb-3">Personnes déjà addherentes :</h4>
+    {% if inscrit is defined and inscrit is not empty %}
+        <ul class="list-group mb-4 shadow-sm">
+            {% for i in inscrit %}
+                {# Vérifier si 'gens' existe et n'est pas vide #}
+                {% set person = (i.gens is defined and i.gens is not empty) ? i.gens[0] : null %}
+                
+                <li class="list-group-item d-flex align-items-center p-3">
+                    {# Affichage de l'image de la personne #}
+                    {% if person %}
+                        {% set personImage = person.img.one() %}
+                        {% if personImage %}
+                            <img src="{{ personImage.getUrl({width: 80, height: 80, mode: 'crop', quality: 75}) }}" 
+                                 alt="Photo de {{ person.title }}" 
+                                 class="rounded-circle me-3 shadow-sm" 
+                                 style="width: 45px; height: 45px; object-fit: cover;"
+                                 loading="lazy">
+                        {% else %}
+                            {# Placeholder si pas d'image pour la personne #}
+                            <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center me-3 shadow-sm" 
+                                 style="width: 45px; height: 45px; font-size: 0.9rem;">
+                                 {{ person.title|slice(0, 1)|upper }} {# Initiale #}
+                            </div>
+                        {% endif %}
+                    {% else %}
+                         {# Placeholder si pas de personne liée #}
+                         <div class="rounded-circle bg-light d-flex align-items-center justify-content-center me-3 shadow-sm" 
+                              style="width: 45px; height: 45px;">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-question text-muted" viewBox="0 0 16 16"><path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.11.248-.247V5.313c0-.137-.11-.247-.248-.247h-.825a.237.237 0 0 0-.241.247v.473zm-.062 3.544a.237.237 0 0 0 .241.247h.825c.138 0 .248-.11.248-.247v-.926c0-.137-.11-.247-.248-.247h-.825a.237.237 0 0 0-.241.247v.926zm.062 2.808a.237.237 0 0 0 .241.247h.825c.138 0 .248-.11.248-.247v-.926c0-.137-.11-.247-.248-.247h-.825a.237.237 0 0 0-.241.247v.926z"/><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/></svg>
+                         </div>
+                    {% endif %}
+
+                    {# Nom et Texte de l'inscription #}
+                    <div class="flex-grow-1">
+                        {% if person %}
+                            <strong class="d-block">{{ person.title }}</strong>
+                        {% else %}
+                            <strong class="d-block text-muted"><i>Personne non spécifiée</i></strong>
+                        {% endif %}
+                        {# Texte de l'inscription (i.title) #}
+                        {% if i.title is defined and i.title is not empty %}
+                            <small class="text-muted">{{ i.title }}</small>
+                        {% endif %}
+
+                        <button class="btn btn-link" 
+                                type="button" 
+                                data-bs-toggle="collapse" 
+                                data-bs-target="#inscription-form-{{ i.id }}" 
+                                aria-expanded="false" 
+                                aria-controls="inscription-form-{{ i.id }}">
+                            {# Afficher/Masquer le formulaire d'inscription #}
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-plus-circle me-2" viewBox="0 0 16 16">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                            </svg>
+                        </button>
+
+                        <div class="collapse" id="inscription-form-{{ i.id }}">
+                            {# Inclure le template d'inscription #}
+                            {# Assurez-vous que le chemin est correct et que le fichier existe #}
+                            {% include "d.twig" with {
+                                obj: i,
+                                user: user
+                            } %}
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="alert alert-light text-center" role="alert">
+            Personne n'est encore inscrit à ce Club.
+        </div>
+    {% endif %}
+
+
+    {# -- Bouton pour Afficher/Masquer le Formulaire -- #}
+    {# Centré et avec marges verticales #}
+    <div class="text-center my-4"> 
+        <button class="btn btn-outline-primary d-inline-flex align-items-center" 
+                type="button" 
+                data-bs-toggle="collapse" 
+                data-bs-target="#inscription-form" 
+                aria-expanded="false" 
+                aria-controls="inscription-form"> {# ID sans # pour aria-controls #}
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-plus-circle me-2" viewBox="0 0 16 16">
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+            </svg>
+            {# Utilisation de span au lieu de p #}
+            <span>S'inscrire au club</span> 
+        </button>
+    </div>
+
+    {# -- Formulaire d'Inscription (Caché par défaut) -- #}
+    {# ID changé pour correspondre au bouton et padding ajouté #}
+    <form method="post" 
+          id="inscription-form" 
+          class="add-action-form collapse p-4 border rounded bg-light mb-5" 
+          accept-charset="UTF-8" 
+          enctype="multipart/form-data">
+        
+            {{ csrfInput() }}
+            {{ actionInput('guest-entries/save') }}
+            {{ hiddenInput('sectionId', 13) }} {# Assurez-vous que 13 est le bon ID #}
+            {{ hiddenInput('enabled', '1') }}
+            
+            {# Vérifier que les variables existent avant de les utiliser #}
+            {% if act is defined and act.id is defined %}
+                 <input type="hidden" name="fields[obj][]" value="{{ act.id }}">
+            {% else %}
+                 {# Gérer l'erreur ou mettre une valeur par défaut si nécessaire #}
+                 <p class="text-danger small">Erreur: ID de l'action manquant.</p> 
+            {% endif %}
+
+            {% if user is defined and user.id is defined %}
+                <input type="hidden" name="fields[gens][]" value="{{ user.id }}">
+             {% else %}
+                 <p class="text-danger small">Erreur: ID de l'utilisateur manquant.</p> 
+             {% endif %}
+            
+            {% if dt is defined %}
+                <input type="hidden" name="fields[dt]" value="{{ dt|date('Y-m-d') }}">
+            {% else %}
+                 <p class="text-danger small">Erreur: Date manquante.</p> 
+             {% endif %}
+
+
+            {# Champ texte pour l'inscription #}
+            <div class="mb-2"> 
+                {# Label caché mais présent pour l'accessibilité #}
+                <label for="inscription-title" class="form-label visually-hidden">Texte de l'inscription :</label> 
+                <input id="inscription-title" {# ID Unique #}
+                       type="text" 
+                       name="title" 
+                       class="form-control form-control-sm" 
+                       placeholder="Ajouter un commentaire (optionnel)..."> {# Placeholder plus descriptif, required retiré? #}
+                       {# J'ai retiré 'required' car le placeholder suggère que c'est optionnel. Remettez-le si besoin. #}
+            </div>
+
+            {# Bouton de soumission #}
+            <button type="submit" class="btn btn-primary btn-sm w-100 mt-2 d-inline-flex align-items-center justify-content-center">
+                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg me-1" viewBox="0 0 16 16">
+                   <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022Z"/>
+                 </svg>
+                 Confirmer l'inscription
+            </button>
+    </form>
+
+{% endblock %}

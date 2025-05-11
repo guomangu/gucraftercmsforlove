@@ -1,0 +1,73 @@
+{% set latestacti = craft.entries()
+        .section('activite')
+        .relatedTo({
+            targetElement: action,
+            field: 'action'
+        })
+        .orderBy('dateCreated DESC')
+        .limit(3)
+        .all() %}
+
+
+
+{% if (latestacti is defined and latestacti is not empty) %}
+    {% for activite in latestacti %}
+        {{activite.title}}
+        {{activite.zone}}
+    {% endfor %}
+{% else %}
+    <p>Aucune activité trouvée.</p>
+{% endif %}
+
+<form method="post" 
+          id="inscription-form-{{ act.id}}-{{ dt|date('Y-m-d') }}" 
+          class="add-action-form collapse p-4 border rounded bg-light mb-5" 
+          accept-charset="UTF-8" 
+          enctype="multipart/form-data">
+        
+            {{ csrfInput() }}
+            {{ actionInput('guest-entries/save') }}
+            {{ hiddenInput('sectionId', 13) }} {# Assurez-vous que 13 est le bon ID #}
+            {{ hiddenInput('enabled', '1') }}
+            
+            {# Vérifier que les variables existent avant de les utiliser #}
+            {% if act is defined and act.id is defined %}
+                 <input type="hidden" name="fields[action][]" value="{{ act.id }}">
+            {% else %}
+                 {# Gérer l'erreur ou mettre une valeur par défaut si nécessaire #}
+                 <p class="text-danger small">Erreur: ID de l'action manquant.</p> 
+            {% endif %}
+
+            {% if user is defined and user.id is defined %}
+                <input type="hidden" name="fields[gens][]" value="{{ user.id }}">
+             {% else %}
+                 <p class="text-danger small">Erreur: ID de l'utilisateur manquant.</p> 
+             {% endif %}
+            
+            {% if dt is defined %}
+                <input type="hidden" name="fields[dt]" value="{{ dt|date('Y-m-d') }}">
+            {% else %}
+                 <p class="text-danger small">Erreur: Date manquante.</p> 
+             {% endif %}
+
+
+            {# Champ texte pour l'inscription #}
+            <div class="mb-2"> 
+                {# Label caché mais présent pour l'accessibilité #}
+                <label for="inscription-title" class="form-label visually-hidden">Texte de l'inscription :</label> 
+                <input id="inscription-title" {# ID Unique #}
+                       type="text" 
+                       name="title" 
+                       class="form-control form-control-sm" 
+                       placeholder="Ajouter un commentaire (optionnel)..."> {# Placeholder plus descriptif, required retiré? #}
+                       {# J'ai retiré 'required' car le placeholder suggère que c'est optionnel. Remettez-le si besoin. #}
+            </div>
+
+            {# Bouton de soumission #}
+            <button type="submit" class="btn btn-primary btn-sm w-100 mt-2 d-inline-flex align-items-center justify-content-center">
+                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg me-1" viewBox="0 0 16 16">
+                   <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022Z"/>
+                 </svg>
+                 Confirmer l'inscription du {{ dt|date('d/m/Y') }}
+            </button>
+    </form>

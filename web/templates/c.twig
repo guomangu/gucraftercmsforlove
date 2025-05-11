@@ -1,0 +1,74 @@
+
+
+{% block content %}
+
+<div class="container mt-4 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6"> {# Limite la largeur du formulaire #}
+
+            {# Afficher les messages de succès ou d'erreur AVANT le formulaire #}
+            {% if craft.app.session.hasFlash('notice') %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ craft.app.session.getFlash('notice') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endif %}
+            {% if craft.app.session.hasFlash('error') %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ craft.app.session.getFlash('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endif %}
+
+            {# Carte pour encadrer le formulaire #}
+            <div class="card shadow-sm">
+                <div class="card-body p-4 p-md-5"> {# Plus de padding sur écrans moyens et + #}
+
+                    <h2 class="card-title text-center mb-4">Créer un compte</h2> {# Titre plus adapté #}
+
+                    <form method="post" accept-charset="UTF-8" enctype="multipart/form-data">
+                        {{ csrfInput() }} {# Important pour la sécurité CSRF #}
+                        {{ actionInput('guest-entries/save') }} {# Action Craft pour sauvegarder #}
+                        {{ hiddenInput('sectionId', 3) }} {# ID de la section où sauvegarder #}
+                        {# {{ hiddenInput('enabled', '1') }} Si vous voulez activer l'entrée par défaut #}
+
+                        {# Champ Titre #}
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Titre :</label>
+                            <input id="title" type="text" name="title" class="form-control" required placeholder="Votre pseudo">
+                        </div>
+
+                        {# Champ Email (corrigé label/id) #}
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email :</label>
+                            <input id="email" type="email" name="fields[mail]" class="form-control" required placeholder="adresse@exemple.com">
+                             {# Note: Le nom 'fields[mail]' est correct pour Craft, 
+                                 mais l'ID 'marque' était incohérent. Corrigé en 'email'. #}
+                        </div>
+
+                        {# Champ Mot de passe (corrigé label/id) #}
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Mot de passe :</label>
+                            <input id="password" type="password" name="fields[pass]" class="form-control" required placeholder="Choisissez un mot de passe">
+                            {# Note: L'ID 'photoVoiture' était incohérent. Corrigé en 'password'. #}
+                        </div>
+
+                        {# Bouton de soumission #}
+                        <div class="d-grid mt-4"> {# d-grid pour bouton pleine largeur #}
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg me-1" viewBox="0 0 16 16">
+                                  <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022Z"/>
+                                </svg>
+                                Enregistrer
+                            </button>
+                        </div>
+
+                    </form> {# Fin du formulaire #}
+                </div> {# Fin Card Body #}
+            </div> {# Fin Card #}
+
+        </div> {# Fin Col #}
+    </div> {# Fin Row #}
+</div> {# Fin Container #}
+
+{% endblock %}

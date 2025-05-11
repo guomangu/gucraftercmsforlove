@@ -1,0 +1,28 @@
+defaultPlacement: end
+enableVersioning: true
+entryTypes:
+  -
+    uid: 76a9e058-da20-4589-b4b7-2d5f468a8456 # piloture
+handle: piloture
+maxAuthors: 1
+name: piloture
+previewTargets:
+  -
+    __assoc__:
+      -
+        - label
+        - 'Primary entry page'
+      -
+        - urlFormat
+        - '{url}'
+      -
+        - refresh
+        - '1'
+propagationMethod: all
+siteSettings:
+  03e942c5-fa2f-4d2a-b7e5-52766f07b3b2: # a
+    enabledByDefault: true
+    hasUrls: true
+    template: piloture/_entry.twig
+    uriFormat: 'piloture/{slug}'
+type: channel

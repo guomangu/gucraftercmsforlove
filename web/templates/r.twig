@@ -1,0 +1,47 @@
+{% block content %}
+
+
+<button class="btn" style="display: flex; place-self: center;" type="button" data-bs-toggle="collapse" data-bs-target="#r-form-{{ action.id }}-{{ dd|date("Y-m-d") }}" aria-expanded="false" aria-controls="#r-form-{{ action.id }}-{{ dd|date("Y-m-d") }}">
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="blue" class="bi bi-plus-circle" viewBox="0 0 16 16">
+        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>  
+    </svg>
+</button>
+
+<form method="post" id="r-form-{{ action.id }}-{{ dd|date("Y-m-d") }}" class="card card-body collapse border-info" accept-charset="UTF-8" enctype="multipart/form-data">
+    {{ csrfInput() }} {# Important pour la sécurité CSRF #}
+    {# {{ actionInpust('guest-entries/save') }} #}
+    {{ actionInput('guest-entries/save') }}
+    {{ hiddenInput('enabled', '1') }}
+    {{ hiddenInput('sectionId', 15) }}
+    <input type="hidden" name="fields[action][]" value="{{ action.id }}"> {# ID du groupe #}
+    <input type="hidden" name="fields[d]" value="{{ dd|date("Y-m-d") }}"> {# Date de l'activité #}
+    <input type="hidden" name="fields[t]" value="{{ t }}">
+    <input type="hidden" name="fields[gensadmin][]" value="{{ user.id }}">
+
+
+
+    <div class="mb-3">
+        <label for="message" class="form-label">Titre de l'activite</label>
+        <input id="message" name="title" class="form-control" placeholder="activite" required></input>
+    </div>
+
+     <div class="mb-3">
+        <label for="message2" class="form-label">Endroit precis</label>
+        <input id="message2" name="fields[zone]" class="form-control" placeholder="renseignez un endroit precis" required></input>
+    </div>
+
+    {# Bouton de soumission #}
+    <button type="submit" class="btn btn-secondary d-inline-flex align-items-center">
+        {# Icône d'invitation Bootstrap Icons #}
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-plus-fill me-2" viewBox="0 0 16 16">
+          <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+          <path fill-rule="evenodd" d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z"/>
+        </svg>
+        Creer une activité
+    </button>
+</form> 
+
+
+
+{% endblock %}

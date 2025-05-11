@@ -1,0 +1,324 @@
+{% set dateLimite = dt %}
+{% set dateLimite2 = dt|date('Y-m-d') %}
+
+
+{% set latestactivites = craft.entries()
+.section('activite')
+.relatedTo({
+    targetElement: action,
+    field: 'action'
+})
+.where(['>=', 'd', dateLimite2])
+.orderBy('d asc')
+.limit(9)
+.all() %}
+
+{% set moment = action.moment[0] %}
+
+{% set ttt = moment.t %}
+
+{% set d = moment.d %}
+{# l est un N #}
+{% set l = moment.l %} 
+
+
+
+
+
+
+
+{# S'assurer que Bootstrap 5 est lié dans votre layout principal #}
+{# Exemple: <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> #}
+{# Et le JS si vous utilisez des composants comme Collapse : <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> #}
+
+{% if l %}
+    {# Vue "Semaine" - Affichage par jour sur plusieurs semaines #}
+    <div class="container-fluid px-0 py-2"> {# Container pour mobile, pas de padding horizontal initial #}
+        <h3 class="text-center fw-bold mb-3 mt-2 h5">Activité du club du {{dateLimite|date("l")}}</h3>
+        {# Titre général pour la section #}
+        {# <h4 class="text-center text-muted small mb-3">À partir du {{ dateLimite|date("l d F") }} - {{ ttt }}h</h4> #}
+
+
+        {% for ii in 0..5 %} {# Boucle sur les semaines/jours #}
+            {% set activitesDuJour = latestactivites|filter(activite => activite.d == dateLimite|date('Y-m-d')) %}
+
+            {% if activitesDuJour is not empty %}
+                {# En-tête pour la date, style "sticky" pour rester visible en scrollant #}
+                <div class="bg-light border-bottom p-2 small mb-2">
+                    <strong class="d-block">{{ dateLimite|date("l d F Y") }}</strong>
+                    {# Si ttt est pertinent pour toutes les activités de ce jour, sinon le mettre dans la carte #}
+                    {# <span class="text-muted">Horaires de référence: {{ ttt }}h</span> #}
+                </div>
+
+                <div class="px-md-3"> {# Ajoute un padding sur les côtés pour les écrans plus grands que mobile #}
+                    {% for ac in activitesDuJour %}
+                        <div class="card shadow-sm mb-3"> {# Carte Bootstrap pour chaque activité #}
+                            <div class="card-body">
+                                {# En-tête de la carte : Titre, Zone, Heure spécifique #}
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <a class="btn btn-outline-dark" href="/n/{{ ac.id }}"><h5 class="card-title fs-6 fw-bold mb-1">{{ ac.title }}</h5>
+                                        <p class="card-subtitle text-muted small mb-1">{{ ac.zone }}</p></a>
+                                        {% set t = ac.t %}
+                                        {% set date_incomplete = ac.d %}
+                                        {% set heure_souhaitee = t ~":00:00" %}
+                                        {% set date_avec_heure_chaine = date_incomplete ~ " " ~ heure_souhaitee %}
+                                        {% set datetimeuuu = date(date_avec_heure_chaine) %}
+                                        <p class="small text-primary fw-bold">{{ datetimeuuu|date("H:i") }}h</p>
+                                    </div>
+                                    {# Vous pouvez ajouter un menu déroulant d'options ici (style 3 points Twitter) #}
+                                    {# <a href="/n/{{ ac.id }}" class="btn btn-sm btn-outline-primary">Voir</a> #}
+                                </div>
+
+                                {# Contenu principal de l'activité (images, texte court) #}
+                                <div class="mb-2">
+                                    {% include "x.twig" with { activ: ac } %} {# S'assurer que x.twig est responsif #}
+                                </div>
+
+                                {# Actions (équivalent likes, commentaires, partage) #}
+                                <div class="d-flex justify-content-around border-top pt-2">
+                                    <div class="text-center small">
+                                        {% include "aa.twig" with { obj:ac } %} {# Ex: Compteur de commentaires/participants #}
+                                    </div>
+                                    <div class="text-center small">
+                                        {% include "e.twig" with { obj: ac, user: user, nooo: true } %} {# Ex: Bouton S'inscrire/Participer/Aimer #}
+                                    </div>
+                                </div>
+
+                                {# Bouton "Lire plus" pour le contenu détaillé #}
+                                <div class="mt-2 text-end">
+                                    <button class="btn btn-link btn-sm text-decoration-none p-0" type="button" data-bs-toggle="collapse" data-bs-target="#comactiv{{ ac.id }}" aria-expanded="false" aria-controls="comactiv{{ ac.id }}">
+                                        Détails & Commentaires
+                                    </button>
+                                </div>
+                                <div class="collapse mt-2" id="comactiv{{ ac.id }}">
+                                    <div class="border p-2 rounded bg-light-subtle">
+                                        {% include "d.twig" with { obj: ac, ttt: ttt, user: user } %}
+                                    </div>
+                                </div>
+                                 {# Lien subtil sur toute la carte si souhaité, placez-le en dernier #}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {# {% else %}
+                <div class="text-center text-muted p-3 small">
+                    Aucune activité programmée pour le {{ dateLimite|date("l d F Y") }}.
+                </div> #}
+            {% endif %}
+
+            {# Formulaire d'ajout d'activité pour cette date/heure #}
+            <div class="p-2 my-3 border-bottom">
+                 <small class="d-block text-muted mb-1">Proposer une activité pour le <strong>{{ dateLimite|date("l d F") }} (autour de {{ ttt }}h):</strong></small>
+                 {% include "r.twig" with { action: action, dd: dateLimite, t:ttt } %}
+            </div>
+
+            {% set dateLimite = dateLimite|date_modify("+1 week") %}
+        {% endfor %}
+    </div>
+
+{% else %}
+    {# Vue "Mois" - Affichage par mois sur plusieurs mois #}
+    <div class="container-fluid px-0 py-2">
+        <h3 class="text-center fw-bold mb-3 mt-2 h5">Activité du club du {{dateLimite|date("d")}}</h3>
+        {# <h4 class="text-center text-muted small mb-3">À partir de {{ dateLimite|date("F Y") }} - {{ ttt }}h</h4> #}
+
+        {% for ii in 0..3 %} {# Boucle sur les mois #}
+            {% set activitesDuMois = latestactivites|filter(activite => activite.d|date('Y-m') == dateLimite|date('Y-m')) %}
+            {# Ajustement du filtre pour prendre toutes les activités du mois courant de dateLimite #}
+
+            {# En-tête pour le mois #}
+            <div class="bg-light border-bottom border-top p-2 small mb-2">
+                <strong class="d-block">{{ dateLimite|date("F Y") }}</strong>
+            </div>
+
+            {% if activitesDuMois is not empty %}
+                 <div class="px-md-3">
+                    {% for ac in activitesDuMois %}
+                        <div class="card shadow-sm mb-3">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <a class="btn btn-outline-dark" href="/n/{{ ac.id }}"><h5 class="card-title fs-6 fw-bold mb-1">{{ ac.title }}</h5>
+                                        <p class="card-subtitle text-muted small mb-1">{{ ac.zone }}</p></a>
+                                        {% set t = ac.t %}
+                                        {% set date_incomplete = ac.d %}
+                                        {% set heure_souhaitee = t ~":00:00" %}
+                                        {% set date_avec_heure_chaine = date_incomplete ~ " " ~ heure_souhaitee %}
+                                        {% set datetimeuuu = date(date_avec_heure_chaine) %}
+                                        {# Afficher la date complète car on est en vue mensuelle #}
+                                        <p class="small text-primary fw-bold">{{ datetimeuuu|date("l d M Y \à H:i") }}h</p>
+                                    </div>
+                                    {# <a href="/n/{{ ac.id }}" class="btn btn-sm btn-outline-primary">Voir</a> #}
+                                </div>
+
+                                <div class="mb-2">
+                                    {% include "x.twig" with { activ: ac } %}
+                                </div>
+
+                                 {# Actions #}
+                                <div class="d-flex justify-content-around border-top pt-2">
+                                     <div class="text-center small">
+                                        {% include "aa.twig" with { obj:ac } %}
+                                    </div>
+                                    <div class="text-center small">
+                                        {% include "e.twig" with { obj: ac, user: user, nooo: true } %}
+                                    </div>
+                                </div>
+
+                                {# Bouton "Lire plus" pour le contenu détaillé #}
+                                <div class="mt-2 text-end">
+                                    <button class="btn btn-link btn-sm text-decoration-none p-0" type="button" data-bs-toggle="collapse" data-bs-target="#comactivMois{{ ac.id }}" aria-expanded="false" aria-controls="comactivMois{{ ac.id }}">
+                                        Détails & Commentaires
+                                    </button>
+                                </div>
+                                <div class="collapse mt-2" id="comactivMois{{ ac.id }}"> {# ID unique pour le collapse #}
+                                    <div class="border p-2 rounded bg-light-subtle">
+                                        {% include "d.twig" with { obj: ac, user: user } %} {# ttt n'est peut-être pas pertinent ici #}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {# {% else %}
+                <div class="text-center text-muted p-3 small">
+                    Aucune activité programmée pour {{ dateLimite|date("F Y") }}.
+                </div> #}
+            {% endif %}
+
+             {# Formulaire d'ajout d'activité pour ce mois/heure de référence #}
+            <div class="p-2 my-3 border-bottom">
+                 <small class="d-block text-muted mb-1">Proposer une activité en <strong>{{ dateLimite|date("F Y") }} (autour de {{ ttt }}h):</strong></small>
+                 {% include "r.twig" with { action: action, dd: dateLimite, t: ttt } %}
+            </div>
+
+            {% set dateLimite = dateLimite|date_modify("+1 month") %}
+        {% endfor %}
+    </div>
+{% endif %}
+
+
+{# {% if l %}
+    <h3>Activite du club du {{ dateLimite|date("l") }}
+    de {{ ttt }}h</h3>
+    {% for ii in 0..5 %}
+        <hr>
+        <p class="btn">{{ dateLimite|date("l d F") }} a - {{ ttt }}h</p>
+        {% set activ = latestactivites|filter(activite => activite.d == dateLimite|date('Y-m-d')) %}
+        {% for ac in activ %}
+            
+
+            {% set t = ac.t %}
+            {% set date_incomplete = ac.d %}
+            {% set heure_souhaitee = t ~":00:00" %}
+            {% set date_avec_heure_chaine = date_incomplete ~ " " ~ heure_souhaitee %}
+            {% set datetimeuuu = date(date_avec_heure_chaine) %}
+
+
+
+            <a class="btn btn-outline-secondary" href="/n/{{ ac.id }}">
+            {{ ac.title }}
+            {{ ac.zone }}
+
+
+            {% include "x.twig" with {
+                    activ: ac,
+                } %}
+            </a>
+
+            <div>
+        {% include "aa.twig" with {
+            obj:ac
+        } %}
+    </div>
+
+            {% include "e.twig" with {
+                obj: ac,
+                user: user,
+                nooo: true
+            } %}
+
+            <div>
+                <button class="btn btn-outline-primary btn-sm mt-auto align-self-start" type="button" data-bs-toggle="collapse" data-bs-target="#comactiv{{ ac.id }}" aria-expanded="false" aria-controls="comactiv{{ ac.id }}">Lire plus</button>
+                <div class="collapse" id="comactiv{{ ac.id }}">
+                    {% include "d.twig" with {
+                        obj: ac,
+                        ttt: ttt,
+                        user: user
+                    } %}
+                </div>
+            </div>
+            
+        {% endfor %}
+
+       
+       {% include "r.twig" with {
+            action: action,
+            dd: dateLimite,
+            t:ttt
+        } %}
+        
+
+        {% set dateLimite = dateLimite|date_modify("+1 week") %}
+    {% endfor %}
+{% else %}        
+     <h3>Activite du club du {{ dateLimite|date("d") }}
+     de {{ ttt }}h</h3>
+    {% for ii in 0..3 %}
+        <hr>
+        {{ dateLimite|date("l d F") }}
+        {% set activ = latestactivites|filter(activite => activite.d == dateLimite|date('Y-m-d')) %}
+        {% for ac in activ %}
+            <a class="btn btn-outline-secondary" href="/n/{{ ac.id }}">
+                {{ ac.title }}
+                {{ ac.zone }}
+
+                {% include "e.twig" with {
+                    obj: ac,
+                    user: user,
+                    nooo: true
+                } %}
+            </a>
+
+
+            {% set t = ac.t %}
+            {% set date_incomplete = ac.d %}
+            {% set heure_souhaitee = t ~":00:00" %}
+            {% set date_avec_heure_chaine = date_incomplete ~ " " ~ heure_souhaitee %}
+            {% set datetimeuuu = date(date_avec_heure_chaine) %}
+
+            {{ datetimeuuu|date("H:i") }}h
+
+            <div>
+                {% include "x.twig" with {
+                    activ: ac,
+                } %}
+
+                <div class="">
+                    {% include "d.twig" with {
+                        obj: ac,
+                        user: user
+                    } %}
+                </div>
+            </div>
+        {% endfor %}
+
+        {% include "r.twig" with {
+            action: action,
+            dd: dateLimite,
+            t: ttt
+        } %}
+
+        {% set dateLimite = dateLimite|date_modify("+1 month") %}
+    {% endfor %}
+{% endif %} #}
+
+
+
+
+
+
+
+
+

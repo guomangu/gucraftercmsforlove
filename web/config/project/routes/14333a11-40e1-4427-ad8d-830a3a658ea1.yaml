@@ -1,0 +1,6 @@
+siteUid: null
+sortOrder: 8
+template: compte.twig
+uriParts:
+  - compte
+uriPattern: compte

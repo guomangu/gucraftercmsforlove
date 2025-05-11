@@ -1,0 +1,22 @@
+columnSuffix: null
+handle: pilotes
+instructions: null
+name: pilotes
+searchable: false
+settings:
+  allowSelfRelations: false
+  branchLimit: null
+  maintainHierarchy: false
+  maxRelations: null
+  minRelations: null
+  selectionLabel: null
+  showCardsInGrid: false
+  showSiteMenu: true
+  sources:
+    - 'section:ff892292-fe95-4c7a-aa41-5c4ae2dc96fd' # pilotes
+  targetSiteId: null
+  validateRelatedElements: false
+  viewMode: list
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\Entries

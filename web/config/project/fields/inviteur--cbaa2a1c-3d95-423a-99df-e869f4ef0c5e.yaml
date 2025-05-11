@@ -1,0 +1,22 @@
+columnSuffix: null
+handle: inviteur
+instructions: null
+name: inviteur
+searchable: false
+settings:
+  allowSelfRelations: false
+  branchLimit: null
+  maintainHierarchy: false
+  maxRelations: null
+  minRelations: null
+  selectionLabel: null
+  showCardsInGrid: false
+  showSiteMenu: false
+  sources:
+    - 'section:9434ca7d-d978-4b3e-b98c-e00e8c4aedaf' # gens
+  targetSiteId: null
+  validateRelatedElements: false
+  viewMode: list
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\Entries

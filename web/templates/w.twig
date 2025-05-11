@@ -1,0 +1,53 @@
+{% set moms = craft.entries()
+.section('moment')
+.relatedTo({
+    targetElement: groupe,
+    field: 'groupe'
+})
+.orderBy('dateCreated DESC')
+.limit(44)
+.all() %}
+
+{% set actions = [] %}
+{% for m in moms %}
+    {% set actio = craft.entries()
+    .section('action')
+    .relatedTo({
+        targetElement: m,
+        field: 'moment'
+    })
+    .orderBy('dateCreated DESC')
+    .limit(44)
+    .all() %}
+    {% set actions = actions|merge(actio) %}
+{% endfor %}
+
+{# <pre>
+    {{ dump(actions) }}
+</pre> #}
+
+{% if actions|length > 0 %}
+    <p class="card-text mb-0">
+        <small class="text-muted">
+            Clubs dans cette agenda :
+        </small>
+    </p>
+    {% for a in actions %}
+        <a href="/b/{{ a.id }}" class="btn btn-outline-primary">{{a.title}}</a>
+    {% endfor %}
+{% endif %}
+
+{# 
+<form method="post" id="v-form" class="add-action-form" accept-charset="UTF-8" enctype="multipart/form-data">
+    {{ csrfInput() }}
+    {{ actionInput('guest-entries/save') }}
+    {{ hiddenInput('sectionId', 10) }}
+    {{ hiddenInput('enabled', '1') }}
+    <input type="hidden" name="fields[groupe][]" value="{{ groupe.id }}">
+
+    <div class="mb-3">
+        <input id="title" type="text" name="title" class="form-control" placeholder="Ajouter un tag" required>
+    </div>
+
+    <button type="submit" class="btn btn-dark btn-sm w-100 mt-2">Ajouter le tag</button>
+</form> #}

@@ -1,0 +1,306 @@
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+{# Afficher les messages de succès ou d'erreur après soumission #}
+{% if craft.app.session.hasFlash('notice') %}
+    <div class="alert alert-success">{{ craft.app.session.getFlash('notice') }}</div>
+{% endif %}
+{% if craft.app.session.hasFlash('error') %}
+    <div class="alert alert-danger">{{ craft.app.session.getFlash('error') }}</div>
+{% endif %}
+
+{# Si l'utilisateur est connecté, récupérer ses informations #}
+{% set emailDepuisCookie = craft.app.session.get('loggedInGensId') %}
+
+{# Vérifier si l'utilisateur est connecté #}
+{% if emailDepuisCookie is not null %}
+    {# L'utilisateur est connecté, vous pouvez afficher ses informations #}
+    {% set user = craft.entries().id(emailDepuisCookie).one() %}
+{% else %}
+    {# L'utilisateur n'est pas connecté, afficher un message ou rediriger #}
+    {# <p><strong>Aucun utilisateur connecté.</strong></p> #}
+    {% set user = craft.entries().id(257).one() %}
+{% endif %}
+
+{% block content %}
+
+{% include "zz.twig" %}
+
+    {# <h2 class="mb-3">La Routine</h2> #}
+    {# <p>Voici les derniers moments que vous avez ajoutés a votre Routine:</p> #}
+    {% if number %}
+        {% set groupe = craft.entries().id(number).one() %}
+    {% else %}
+        {% set groupe = craft.entries().id(231).one() %} {# ID par défaut si aucun n'est fourni #}
+    {% endif %}
+    
+    {% set ids_inscrits = groupe.gensinscrit|map(inscrit => inscrit.id) %}
+
+    {% if user.id in ids_inscrits %}
+         {% set latestmom = craft.entries()
+        .section('moment')
+        .relatedTo({
+            targetElement: groupe,
+            field: 'groupe'
+        })
+        .orderBy('t asc')
+        .limit(60)
+        .all() %}
+    {% else %}
+        {% set latestmom = craft.entries()
+        .section('moment')  
+        .relatedTo({
+            targetElement: groupe,
+            field: 'groupe'
+        })
+        .orderBy('t asc')
+        .limit(60)
+        .all() %}
+    {% endif %}
+    
+
+{# <pre>
+    {{ dump(latestmom) }}
+</pre> #}
+
+    {# {% set latestmom = craft.entries()
+        .section('moment')
+        .orderBy('t asc')
+        .limit(60)
+        .all() %} #}
+
+    {# Assurez-vous que Bootstrap CSS est inclus dans votre page principale #}
+    {# Exemple: <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> #}
+<p style="justify-self: center; margin:0">{{ date_variable|date('l d/m/Y') }}</p>
+<p style="justify-self: center;"><strong>{{ date_variable|date('H:i') }}</strong></p>
+
+
+    {# Si des moments sont trouvés, affichez-les #}
+
+    {% if latestmom|length == 0 %}
+        <div class="alert alert-info">Aucun moment trouvé.</div>
+    {% else %}
+
+    
+
+
+<div class="container mt-4">
+    <h2 class="mb-3">Agenda: {{ groupe.title }}</h2>
+    <small class="text-muted">Proprietaire: {{groupe.gensadmin[0].title}}</small>
+    <div>
+        {% include "aa.twig" with {
+            obj:groupe
+        } %}
+    </div>
+    <div class="event-details mt-2">
+        {% include "p.twig" with {
+            groupe: groupe,
+            user: user,
+        } %}
+    </div>
+
+    <hr>
+
+    <div class="event-details mt-2">
+        {% include "v.twig" with {
+            groupe: groupe
+        } %}
+    </div>
+
+    <div class="event-details mt-2">
+        {% include "w.twig" with {
+            groupe: groupe
+        } %}
+    </div>
+    
+
+
+    <div class="">
+        {% include "d.twig" with {
+            obj: groupe,
+            user: user
+        } %}
+    </div>
+
+
+
+    <div class="row-cols-1"> {# Ajustez les colonnes selon vos préférences #}
+        {% set currentDate = date_variable %}
+        {% for i in 1..31 %} {# Attention: Ceci affiche toujours 31 jours. Idéalement, adaptez à la longueur du mois réel #}
+
+            {# --- MODIFICATION START --- #}
+            {# 1. Filter events for the current day BEFORE deciding to render the card #}
+            {% set eventsForThisDay = latestmom|filter(mom => mom.d == currentDate|date('d') or mom.l == currentDate|date('N')) %}
+
+            {# 2. Only render the card if there are events for this day #}
+            {% if eventsForThisDay is not empty %}
+
+                <div class="col"> {# Added mb-4 for spacing between cards #}
+                    <div class="card shadow-sm"> {# h-100 pour des cartes de hauteur égale dans une ligne #}
+                        <div class="card-header bg-light">
+                            <h5 class="card-title mb-0">
+                                {{ currentDate|date('d') }} - {{ currentDate|date('l') }} {# Affiche le jour (ex: 18 - Vendredi) #}
+                            </h5>
+                        </div>
+                        <div class="card-body d-flex flex-column"> {# flex-column pour pousser le footer en bas si besoin #}
+
+                            {# 3. Loop through the PRE-FILTERED events for this day #}
+                            {% for mom in eventsForThisDay %}
+                                {# Affiche les détails de l'événement #}
+                                <div class="">
+                                    <p class="card-text mb-1">
+                                        <strong>Heure :</strong> {{ mom.t }}h
+                                    </p>
+
+                                    {# Inclut votre template 'a.twig' pour les détails supplémentaires #}
+                                    <div class="event-details mt-2">
+                                        {% include "a.twig" with {
+                                            mom: mom,
+                                            user: user,
+                                            td: currentDate|date('d'),
+                                            dt: currentDate,
+                                            t: mom.t
+                                        } %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+
+                            {# 4. The 'Rien de prévu' block is no longer needed here,
+                                  because we only enter this 'if' when events exist. #}
+
+                        </div> {# Fin card-body #}
+                        {# Vous pourriez ajouter un card-footer si nécessaire #}
+                        {# <div class="card-footer text-muted"> ... </div> #}
+                    </div> {# Fin card #}
+                </div> {# Fin col #}
+
+            {% endif %} {# End check for eventsForThisDay #}
+            {# --- MODIFICATION END --- #}
+
+
+            {# Passe au jour suivant (this happens regardless of whether the day was displayed) #}
+            {% set currentDate = currentDate|date_modify("+1 day") %}
+
+        {% endfor %} {# Fin de la boucle des jours #}
+
+      </div> {# Fin row #}
+</div> {# Fin container #}
+
+    {% endif %}
+
+    {# --- FORM REMAINS UNCHANGED --- #}
+    <form method="post" class="m-5" accept-charset="UTF-8" enctype="multipart/form-data">
+        {{ csrfInput() }} {# Important pour la sécurité CSRF #}
+        {{ actionInput('guest-entries/save') }} {# Action Craft pour sauvegarder #}
+        {# {{ actionInput('guest-entries/save') }} #}
+        {{ hiddenInput('sectionId', 6) }} {# ID de la section où sauvegarder #}
+        {{ hiddenInput('enabled', '1') }}
+        <input type="hidden" name="fields[groupe][]" class="form-control" required value="{{ groupe.id }}">
+
+        
+
+        <div class="mb-3">
+            <label for="title" class="form-label">Moment:</label>
+            <input id="title" type="hidden" name="title" class="form-control" value="{{groupe}}-{{user}}" required>
+        </div>
+
+
+        <div class="mb-3">
+            <label class="form-label">heure</label>
+            <select name="fields[t]" class="form-select" aria-label="Default select example" required>
+                {% set hourDate = date() %} {# Use a separate variable for hours starting from now #}
+                {% for i in 0..23 %}
+                    <option value="{{ hourDate|date('H') }}">{{ hourDate|date('H') }} heure</option>
+                    {% set hourDate = hourDate|date_modify("+1 hours") %}
+                {% endfor %}
+            </select>
+        </div>
+
+        <hr> {# Séparateur visuel #}
+
+        <div class="mb-3">
+            <input type="radio" id="select-type-week" name="selection_type" value="week">
+            <label for="select-type-week">Choisir par jour de la semaine</label>
+        </div>
+        <div class="mb-3">
+            <label for="select-day-week" class="form-label">Jour des semaines</label>
+            <select id="select-day-week" name="fields[l]" class="form-select" aria-label="Default select example" disabled> {# Désactivé par défaut #}
+                <option value="" selected disabled>-- Choisir --</option>
+                {% set weekDayDate = date() %} {# Use a separate variable for week days starting from today #}
+                {% for i in 0..6 %}
+                     {# Ensure we start from the correct day if date_variable isn't today #}
+                     {% if i == 0 %}{% set weekDayDate = date_variable %}{% endif %}
+                    <option value="{{ weekDayDate|date('N') }}">{{ weekDayDate|date('l') }}</option>
+                    {% set weekDayDate = weekDayDate|date_modify("+1 day") %}
+                {% endfor %}
+            </select>
+        </div>
+
+        <hr> {# Séparateur visuel #}
+
+        <div class="mb-3">
+            <input type="radio" id="select-type-month" name="selection_type" value="month">
+            <label for="select-type-month">Choisir par jour du mois</label>
+        </div>
+        <div class="mb-3">
+            <label for="select-day-month" class="form-label">Jour des mois</label>
+            <select id="select-day-month" name="fields[d]" class="form-select" aria-label="Default select example" disabled> {# Désactivé par défaut #}
+                <option value="" selected disabled>-- Choisir --</option>
+                {% set monthDayDate = date_variable %} {# Use the loop variable starting from date_variable #}
+                {% for i in 1..31 %} {# Display options for 31 days #}
+                    <option value="{{ monthDayDate|date('d') }}">{{ monthDayDate|date('d') }}</option>
+                    {% set monthDayDate = monthDayDate|date_modify("+1 day") %}
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Ajouter un Moment</button>
+    </form>
+
+
+    <script>
+        const radioWeek = document.getElementById('select-type-week');
+        const radioMonth = document.getElementById('select-type-month');
+        const selectWeek = document.getElementById('select-day-week');
+        const selectMonth = document.getElementById('select-day-month');
+
+        // Function to handle enabling/disabling selects
+        function handleRadioChange() {
+            if (radioWeek.checked) {
+                selectWeek.disabled = false; // Active le select semaine
+                selectMonth.disabled = true;  // Désactive le select mois
+                selectMonth.value = "";       // Réinitialise la valeur du select mois
+            } else if (radioMonth.checked) {
+                selectMonth.disabled = false; // Active le select mois
+                selectWeek.disabled = true;   // Désactive le select semaine
+                selectWeek.value = "";        // Réinitialise la valeur du select semaine
+            } else {
+                 // Optional: If neither is checked (e.g., on initial load or reset)
+                 selectWeek.disabled = true;
+                 selectMonth.disabled = true;
+            }
+        }
+
+        radioWeek.addEventListener('change', handleRadioChange);
+        radioMonth.addEventListener('change', handleRadioChange);
+
+        // Optional: Reset logic if the form is reset
+        const form = selectWeek.closest('form'); // Trouve le formulaire parent
+        if (form) {
+            form.addEventListener('reset', function() {
+                // Désactive les deux selects et resets radio check state after native reset
+                setTimeout(() => {
+                    selectWeek.disabled = true;
+                    selectMonth.disabled = true;
+                    // Radio buttons are reset by the browser, handleRadioChange() might be called
+                    // or you can explicitly uncheck them if needed, though usually not necessary.
+                    // radioWeek.checked = false;
+                    // radioMonth.checked = false;
+                }, 0);
+            });
+        }
+
+        // Initial state check in case the page loads with a radio pre-selected (e.g., browser cache)
+        handleRadioChange();
+    </script>
+{% endblock %}

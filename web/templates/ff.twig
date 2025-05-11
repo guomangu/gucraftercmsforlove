@@ -1,0 +1,156 @@
+{% block content %}
+
+{# <pre>
+    {{ dump(user) }}
+</pre> #}
+
+
+{% set inscrits = craft.entries()
+.section('inscrit')
+.relatedTo({
+    targetElement: user,
+    field: 'gens'
+})
+.limit(27)
+.all() %}
+
+{# <pre>
+    {{ dump(inscrits) }}
+</pre> #}
+{% set groupes = [] %}
+{% set actions = [] %}
+{% set activites = [] %}
+{% set gens = [] %}
+{% set tags = [] %}
+{% for item in inscrits %}
+    {% if item.obj[0].sectionId == 12 %}
+        {% set groupes = groupes|merge(item.obj) %}
+    {% elseif item.obj[0].sectionId == 7 %}
+        {% set actions = actions|merge(item.obj) %}
+    {% elseif item.obj[0].sectionId == 15 %}
+        {% set activites = activites|merge(item.obj) %}
+    {% elseif item.obj[0].sectionId == 9 %}
+        {% set gens = gens|merge(item.obj) %}
+    {% endif %}
+{% endfor %}
+
+{# <pre>
+    {{ dump(groupes) }}
+</pre> #}
+
+
+{% set gr20 = craft.entries()
+.section('groupe')
+.gensadmin(user.id)
+.limit(6)
+.all() %}
+{# <pre>
+    {{ dump(gr20) }}
+</pre> #}
+{% set groupes = groupes|merge(gr20) %}
+
+{% for groupe in groupes %}
+    {# <a class="btn" href="/m/{{ groupe.id }}"> groupe: {{ groupe.title }}</a> #}
+    <div class="card card-body m-4">
+        <h2 class="mb-3">Agenda: 
+            <a class="btn btn-outline-secondary" href="/m/{{ groupe.id }}">{{ groupe.title }}
+                ({% include "x.twig" with {
+                    activ: groupe,
+                } %})
+            </a> 
+        </h2>
+        {# <div>
+            {% include "x.twig" with {
+                activ: groupe,
+            } %}
+        </div> #}
+        {# <div class="event-details mt-2">
+            {% include "p.twig" with {
+                groupe: groupe,
+                user: user,
+            } %}
+        </div>
+        <hr> #}
+
+        <div class="event-details mt-2">
+            {% include "v.twig" with {
+                groupe: groupe
+            } %}
+        </div>
+
+        <div class="event-details mt-2">
+            {% include "w.twig" with {
+                groupe: groupe
+            } %}
+        </div>
+        
+
+
+        {# <div class="">
+            {% include "d.twig" with {
+                obj: groupe,
+                user: user
+            } %}
+        </div> #}
+    </div>
+{% endfor %}
+
+<hr>
+
+{% for action in actions %}
+<div class="card card-body m-4">
+    {# <a class="btn" href="/b/{{ action.id }}">action: {{ action.title }}</a>  #}
+    {% include "bb.twig" with {
+        latestaction: action,
+        user: user
+    }%}
+</div>
+{% endfor %}
+
+<hr>
+
+<div class="card card-body m-4">
+{% for ac in activites %}
+    {% set t = ac.t %}
+    {% set date_incomplete = ac.d %}
+    {% set heure_souhaitee = t ~":00:00" %}
+    {% set date_avec_heure_chaine = date_incomplete ~ " " ~ heure_souhaitee %}
+    {% set datetimeuuu = date(date_avec_heure_chaine) %}
+
+
+    <p>{{datetimeuuu|date("l d F")}} a {{datetimeuuu|date("H")}}h</p>
+    <a class="btn btn-outline-secondary" href="/n/{{ ac.id }}">
+    {{ ac.title }}
+    {{ ac.zone }}
+
+    {% include "e.twig" with {
+        obj: ac,
+        user: user,
+        nooo: true
+    } %}
+
+    {% include "x.twig" with {
+            activ: ac,
+        } %}
+    </a>
+
+    <div>
+        <div class="">
+            {% include "d.twig" with {
+                obj: ac,
+                ttt: t,
+                user: user
+            } %}
+        </div>
+    </div>
+{% endfor %}
+</div>
+{# <hr>
+
+{% for gen in gens %}
+    gens: {{ gen.title }}
+{% endfor %} #}
+
+
+
+{% endblock %}

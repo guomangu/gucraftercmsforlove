@@ -1,0 +1,121 @@
+{# {% set pilotes = craft.entries()
+.section('pilotes')     
+.orderBy('dateCreated desc') 
+.limit(3)                 
+.all() %} #}
+
+{# Si l'utilisateur est connecté, récupérer ses informations #}
+{% set emailDepuisCookie = craft.app.session.get('loggedInGensId') %}
+
+{# Vérifier si l'utilisateur est connecté #}
+{% if emailDepuisCookie is not null %}
+    {# L'utilisateur est connecté, vous pouvez afficher ses informations #}
+    {% set user = craft.entries().id(emailDepuisCookie).one() %}
+{% else %}
+    {# L'utilisateur n'est pas connecté, afficher un message ou rediriger #}
+    <p><strong>Aucun utilisateur connecté.</strong></p>
+{% endif %}
+
+
+
+{% if pilote|length %}
+    {# <ul>
+        {% for pilote in pilotes %} #}
+        {# {{dump(pilote)}} #}
+            {# <li> #}
+                {# Lien vers le pilote individuel si vous avez configuré l'URI #}
+                {# <a href="{{ pilote.url }}"> #}
+                <h3>{{ pilote.title }}</h3> {# Affiche le titre (ou combinez marque/modèle) #}
+                <p> {{ pilote.slug }}</p> {# Affiche la marque #}
+                    {# Exemple: {{ voiture.marque }} {{ voiture.modele }} ({{ voiture.annee }}) #}
+                {# </a> #}
+                {# Afficher une image si elle existe #}
+                {% set image = pilote.imgpilote.one() %}
+                {% if image %}
+                     <img src="{{ image.getUrl({width: 100, height: 100, mode: 'crop'}) }}" alt="{{ image.title ?? voiture.title }}">
+                {% endif %}
+            {# <li> #}
+
+            
+            <hr>
+            <p>connecté : {{user}}</p>
+
+
+            {% set pilo = craft.entries().section('pilogens').pilotes(pilotes.id).all() %}
+
+            {% set allGensIds = [] %}
+
+            {% for item in pilo %}
+                {% if item.gens|length %}
+                    {% set allGensIds = allGensIds|merge(item.gens.ids()) %}
+                {% endif %}
+            {% endfor %}
+
+            {# <pre>
+                {{ dump(allGensIds) }}
+            </pre> #}
+            {% set allGensEntries = craft.entries().section('gens').id(allGensIds).all() %}
+
+            {% set userIsABO = false %}
+            {% for g in allGensEntries %}
+                <p>-{{ g }}</p>
+
+
+                {% if g.id is defined and g.id == user.id %}
+                    {% set userIsABO = true %}
+                {% endif %}
+            {% endfor %}
+
+
+
+            {% if user %}
+
+                {% if userIsABO %}
+                {# {% set pilouser = craft.entries().section('pilogens').pilotes(pilotes.id).gens(user.id).one() %} #}
+                {% set pi = craft.entries()
+                .section('pilogens')
+                .relatedTo({
+                    targetElement: pilote,
+                    field: 'pilotes'
+                })
+                .relatedTo({
+                    targetElement: user,
+                    field: 'gens'
+                })
+                .one() %}
+                {# <pre>
+                    {{ dump(pilote.id) }}
+                </pre> #}
+                <form method="post" accept-charset="UTF-8" enctype="multipart/form-data">
+                    {{ csrfInput() }} {# Important pour la sécurité CSRF #}
+                    {{ actionInput('entries/save-entry') }}
+                    {{ redirectInput('liste-voitures') }} {# Redirige vers cette même page après succès (optionnel) #}
+                    <input type="hidden" name="enabled" value="0"> 
+                    {# {{ hiddenInput('sectionId', 4) }} #}
+                    {{ hiddenInput('entryId', pi.id) }}
+                    <input type="submit" value="s'desabonner">
+                </form>        
+                {% else %}
+                <form method="post" accept-charset="UTF-8" enctype="multipart/form-data">
+                    {{ csrfInput() }} {# Important pour la sécurité CSRF #}
+                    {# {{ actionInpust('guest-entries/save') }} #}
+                    {{ actionInput('entries/save-entry') }}
+                    {{ redirectInput('liste-voitures?success=22') }} {# Redirige vers cette même page après succès (optionnel) #}
+
+                    {# Champs du deuxième formulaire #}
+                    {{ hiddenInput('sectionId', 4) }}
+                    {# {{ hiddenInput('entryId', pilote.id) }} #}
+                    {# <input type="hidden" name="title" value="{{ pilote.title ?? null }}"> #}
+                    <input type="hidden" name="fields[gens][]" value="{{ user.id }}">
+                    <input type="hidden" name="fields[pilotes][]" value="{{ pilote.id }}">
+                    <input type="hidden" name="slug" value="{{ pilote.slug ~ user.slug ?? null }}">
+                    {# {{ hiddenInput('entryId', user.id) }} #}
+                    {# <input type="hidden" name="fields[pilotes][]" value="{{ pilote.id ?? null }}"> #}
+                    {# <input type="hidden" name="fields[gens][0][pilotes][]" value="{{ pilote.id ?? null }}"> #}
+                    <input type="submit" value="s'abonner">
+                </form>                
+                {% endif %}
+            {% endif %}
+{% else %}
+    <p>Aucun pilote n'a été ajouté pour le moment.</p>
+{% endif %}

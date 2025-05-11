@@ -1,0 +1,9 @@
+siteUid: null
+sortOrder: 2
+template: n.twig
+uriParts:
+  - n/
+  -
+    - number
+    - \d+
+uriPattern: 'n/<number:\d+>'

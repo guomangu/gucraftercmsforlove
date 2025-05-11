@@ -1,0 +1,37 @@
+
+
+
+
+<form id="idadd2-{{ voiture.id }}" method="post" accept-charset="UTF-8" enctype="multipart/form-data">
+    {{ hiddenInput('sectionId', 2) }} {# ID de la section où sauvegarder #}
+    {{ actionInput('entries/save-entry') }}
+    {{ redirectInput('liste-voitures?success=1') }} {# Redirige vers cette même page après succès (optionnel) #}
+    {{ csrfInput() }} {# Important pour la sécurité CSRF #}
+    {# <input type="hidden" name="enabled" value="1">  #}
+    <input type="text" name="title" placeholder="nom pilote"> {# Titre de la voiture #}
+    <input type="hidden" name="slug" value="lolol"> {# Titre de la voiture #}
+    <input type="hidden" name="ID" value="9999"> {# ID de la voiture #}
+</form>
+
+<form id="idadd-{{ voiture.id }}" method="post" accept-charset="UTF-8" enctype="multipart/form-data">
+    {{ redirectInput('liste-voitures?success=1') }} {# Redirige vers cette même page après succès (optionnel) #}
+    {{ csrfInput() }} {# Important pour la sécurité CSRF #}
+    {{ actionInput('entries/save-entry') }}
+    {{ hiddenInput('sectionId', 5) }} {# ID de la section où sauvegarder #}
+    <input type="hidden" name="fields[voitures]" value="{{ voiture.id }}">
+    <input type="hidden" name="fields[pilotes]" value="9999">
+    <input type="hidden" name="slug" value="lilil"> {# Titre de la voiture #}
+</form>
+
+<button id="add" onclick="myFun({{ voiture.id }})" class="btn btn-primary">Ajouter</button>
+
+
+<script>
+function myFun(id) {
+    alert("ok");
+    document.getElementById("idadd2-"+id).submit();
+    setTimeout(function() {
+        document.getElementById("idadd-"+id).submit();
+    }, 100); // Délai de 100 millisecondes
+}
+</script>

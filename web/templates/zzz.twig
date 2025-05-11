@@ -1,0 +1,111 @@
+{% block content %}
+{# Si l'utilisateur est connecté, récupérer ses informations #}
+{% set emailDepuisCookie = craft.app.session.get('loggedInGensId') %}
+
+{# Vérifier si l'utilisateur est connecté #}
+{% if emailDepuisCookie is not null %}
+    {# L'utilisateur est connecté, vous pouvez afficher ses informations #}
+    {% set user = craft.entries().id(emailDepuisCookie).one() %}
+{% else %}
+    {# L'utilisateur n'est pas connecté, afficher un message ou rediriger #}
+    {# <p><strong>Aucun utilisateur connecté.</strong></p> #}
+    {% set user = craft.entries().id(257).one() %}
+{% endif %}
+
+{% set latestGROUPE = craft.entries()
+.section('inscrit')
+.relatedTo({
+    targetElement: user,
+    field: 'gens'
+})
+.orderBy('dateCreated DESC')
+.limit(21)
+.all() %}
+
+{# .relatedTo({
+    targetElement: craft.entries().sectionId(12),
+    field: 'obj',
+}) #}
+{# {% set latestGROUPE_IDs = craft.entries()
+    .section('inscrit') 
+    .relatedTo({
+        targetElement: user,
+        field: 'gens'
+    })
+    .relatedTo({
+        targetElement: craft.entries().sectionId(12),
+        field: 'obj' 
+    })
+    .limit(9)
+    .ids() %} 
+
+{% if latestGROUPE_IDs is not empty %}
+    {% set latestGROUPE = craft.entries()
+        .id(latestGROUPE_IDs)    
+        .fixedOrder(true)        
+        .all() %}
+{% else %}
+    {% set latestGROUPE = [] %}
+{% endif %} #}
+
+{# <pre>
+    {{ dump(user) }}
+</pre> #}
+
+
+<div class="btn-group">
+    <button type="button" class="btn btn-outline-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+        Suivis
+    </button>
+    <ul class="dropdown-menu">
+        {% for ins in latestGROUPE %}
+            {% if ins.obj[0].title %}
+                {% if loop.first == false %}
+                    <hr style="width:55%;">
+                {% endif %}
+                <li><a class="dropdown-item" 
+                {% if ins.obj[0].sectionId == 12 %}
+                    href="/m/{{ins.obj[0].id}}"
+                {% elseif ins.obj[0].sectionId == 7 %}
+                    href="/b/{{ins.obj[0].id}}"
+                {% elseif ins.obj[0].sectionId == 15 %}
+                    href="/n/{{ins.obj[0].id}}"
+                {% endif %}
+                >
+                    {{ins.obj[0].title}}
+                    <br>
+                    <small class="text-muted">
+                        {% if ins.obj[0].sectionId == 12 %}
+                            <span>Agenda<span>
+                        {% elseif ins.obj[0].sectionId == 7 %}
+                            <span>Club<span>
+                        {% elseif ins.obj[0].sectionId == 15 %}
+                            <span>Activité<span>
+                        {% endif %}
+                    </small>
+                </a></li>
+            {% endif %}
+        {% endfor %}
+        {# <li><a class="dropdown-item" href="#">Action</a></li>
+        <li><a class="dropdown-item" href="#">Another action</a></li>
+        <li><a class="dropdown-item" href="#">Something else here</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="#">Separated link</a></li> #}
+    </ul>
+</div>
+    
+
+
+
+
+{# <div class="btn-group"> #}
+    <button class="btn btn-outline-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEptdr" aria-expanded="false" aria-controls="collapseEptdr">
+        Conversations
+    </button>
+    <div class="collapse" id="collapseEptdr">
+        {% include "dd.twig" with {
+            user:user,
+        } %}
+    </div>
+{# </div> #}
+{% endblock %}

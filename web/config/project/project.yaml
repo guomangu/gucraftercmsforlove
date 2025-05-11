@@ -1,0 +1,409 @@
+dateModified: 1746941356
+email:
+  fromEmail: aluligu@gmail.com
+  fromName: a
+  transportType: craft\mail\transportadapters\Sendmail
+fs:
+  imgs:
+    hasUrls: true
+    name: imgs
+    settings:
+      path: $DOCUMENT_ROOT/imgs
+    type: craft\fs\Local
+    url: '//localhost:8080/imgs'
+meta:
+  __names__:
+    0d874f90-596b-4955-b5f0-c6c493421528: imgsvol # imgsvol
+    0e5d0b9d-7489-4242-b4f3-c8ea138b9500: gensInscrit # gensInscrit
+    1c9ba6df-53d5-4c20-a539-9d3dafdc2dae: article # article
+    1dbdb624-0e6e-4f1a-b048-5aed379070c7: nom # nom
+    1f85ae76-cd32-4097-9359-b044bcf2e13e: gensFav # gensFav
+    2b3fd0f8-3213-4436-a5b6-8c5aa05aa1fd: tag # tag
+    2b8d03c2-82de-4336-8c4b-f185a83c655a: Moment # Moment
+    2b274626-6d0d-426b-87d0-0f38b76388bd: pilogens # pilogens
+    3adee4e4-e6a6-4f1d-85ce-21d122603d38: mail # mail
+    3e570fea-12ba-4b44-beb1-5fffeed5f4c5: pilogens # pilogens
+    03e942c5-fa2f-4d2a-b7e5-52766f07b3b2: a # a
+    4c349411-fa69-445e-8af6-d6c9028b1530: Activite # Activite
+    5c005119-58f0-4eee-ad8c-32984a2686c3: pilotes # pilotes
+    5f8fa8ba-60f9-4702-9280-e50ea7873d1c: Inscrit # Inscrit
+    6b58fdbf-150e-4d17-9afa-ee8bfb0baed9: Action # Action
+    6d6502b0-1b03-47c3-95ac-89cf8075119f: Blog # Blog
+    06ef7080-b2fe-4693-864c-a57b053238a3: moment # moment
+    6f5631e2-4590-4486-a207-c8f6d670e07e: Tag # Tag
+    7a37312f-948f-4444-b01a-fdc18741916a: blog # blog
+    7ca0e1a8-1305-4951-a879-4433b2f9faf9: t # t
+    7db4d317-2c4e-4296-8589-93616db7aed0: Article # Article
+    8a6cd0b3-d0ff-4c2b-9142-ff50b5cf8a16: a # a
+    8e259574-5cd0-4583-8e48-2b026994a499: universel # universel
+    9b987a32-67f0-4c54-920b-73bf016c0372: photoVoiture # photoVoiture
+    16b47597-226d-4e28-a5b2-9ca5c26bae10: jour # jour
+    16df0a23-d742-4ad8-b1f9-338dce5f607a: img # img
+    21ec364a-a805-4314-866b-c93a3e80c3d6: action # action
+    22f269b9-3aec-4df6-8c2b-e1eb2b36b3dd: activite # activite
+    039b7336-79fe-4044-b756-5bf523a22f3e: Moment # Moment
+    59aacfcf-933c-4521-a3c9-e25dff69e354: Annee # Annee
+    61e4ba75-3c17-4a7f-acc6-322b97ee9528: gens # gens
+    64e8911c-d1b5-497c-b7ca-5479761cbe6f: msg # msg
+    65a92557-9f8f-4edb-8153-73c5201cccb5: time # time
+    76a9e058-da20-4589-b4b7-2d5f468a8456: piloture # piloture
+    86ee3b90-9b58-4d1e-8824-7ffbb49dfad3: article # article
+    97e2c722-27aa-45db-a906-73bdda35d91b: groupe # groupe
+    325d5bd4-c71d-4814-bb0e-fe4e334afa60: m # m
+    412d2b65-92f7-40dc-8dbf-e495840944c4: 'Voitures standard' # Voitures standard
+    778b148a-6bcf-4d14-998f-6db6d6dc01fc: Groupe # Groupe
+    879ed238-6c41-49ca-bb35-e156a0f6b56a: voitures # voitures
+    910dfa67-9d7d-4177-89ed-2fd338ad3cd8: Msg # Msg
+    953caa55-af63-4903-acfb-f73a70f54780: desc # desc
+    4346d328-a60e-4f1c-91b0-32ce6f864fc4: Abo # Abo
+    4730e690-2915-460e-8bbf-f8be1fcc2f15: vie # vie
+    6397d59f-9805-4374-8263-035d57a7571d: date # date
+    9434ca7d-d978-4b3e-b98c-e00e8c4aedaf: gens # gens
+    029794bd-8c92-407b-be2c-2a35cb09533b: piloture # piloture
+    34992eb5-ed3a-4d37-b487-ecbfcf10aea0: city # city
+    655867ba-9aa7-4743-8a08-14f13af820fd: groupe # groupe
+    7399850e-5b21-4b14-8694-29f4ac63d0fc: pass # pass
+    a7c10eaa-616c-4edf-8aa6-2ddc2e17d921: agendafriends # agendafriends
+    a543327e-8cfc-4c29-b047-b12cf81f111c: gensAdmin # gensAdmin
+    ad105d8f-c381-423f-8997-aee66bb4cf3c: coordonnee # coordonnee
+    b0051ca7-90f1-401f-91f8-01488af83488: art # art
+    b4a6c2b9-87db-4f20-8133-1ca8cde42796: obj # obj
+    b6d36efd-b595-4b9b-9366-497092d09733: dt # dt
+    b40728d2-050f-4fff-9667-3f80946369ac: Desc # Desc
+    ba425b92-d80c-4d12-874e-0b64d61cd292: pilotes # pilotes
+    bd1d9f29-cc92-44e1-9fc4-44eb474992cf: imgpilote # imgpilote
+    c3f3fb56-9fb3-4129-838b-1a5e7f05bc32: gens # gens
+    c88ac6de-2c43-418e-9f85-b15cb81d8a0f: ville # ville
+    cbaa2a1c-3d95-423a-99df-e869f4ef0c5e: inviteur # inviteur
+    d1c448cf-2bc2-42c7-95e7-4ce5a5e67575: routine # routine
+    e0f9c36c-d8a9-4b16-af1c-3db91b0d053c: d # d
+    e4b1177a-86bc-4ede-8eab-9a11f73d4e12: 'Public Schema' # Public Schema
+    e7d88c8f-0be6-494d-b690-66a83262de0a: zone # zone
+    e7e2bc2d-2c59-46a3-85cf-c86fb4a033be: inscrit # inscrit
+    e5131bdd-7b21-4287-992b-d2504987a1a6: Marque # Marque
+    ec1ad995-5e56-42ce-b5f1-c47f311664ca: tag # tag
+    f3a6590e-f320-4ab4-afd7-dfd64fdb04a3: abo # abo
+    f7d085ff-ca17-4634-af22-21ab371bb1b9: action # action
+    f292de92-c1b2-45c5-8734-0371f823f9cb: voitures # voitures
+    ff892292-fe95-4c7a-aa41-5c4ae2dc96fd: pilotes # pilotes
+plugins:
+  guest-entries:
+    edition: standard
+    enabled: true
+    schemaVersion: 2.1.0
+    settings:
+      enableCsrfProtection: '1'
+      entryVariable: entry
+      sections:
+        __assoc__:
+          -
+            - 879ed238-6c41-49ca-bb35-e156a0f6b56a # voitures
+            -
+              __assoc__:
+                -
+                  - sectionUid
+                  - 879ed238-6c41-49ca-bb35-e156a0f6b56a # voitures
+                -
+                  - allowGuestSubmissions
+                  - '1'
+                -
+                  - enabledByDefault
+                  - '1'
+                -
+                  - runValidation
+                  - '1'
+                -
+                  - authorUid
+                  - f2ddd9c2-0d1b-4341-9c50-69fa57b2a633
+          -
+            - 9434ca7d-d978-4b3e-b98c-e00e8c4aedaf # gens
+            -
+              __assoc__:
+                -
+                  - sectionUid
+                  - 9434ca7d-d978-4b3e-b98c-e00e8c4aedaf # gens
+                -
+                  - allowGuestSubmissions
+                  - '1'
+                -
+                  - enabledByDefault
+                  - '1'
+                -
+                  - runValidation
+                  - '1'
+                -
+                  - authorUid
+                  - f2ddd9c2-0d1b-4341-9c50-69fa57b2a633
+          -
+            - ff892292-fe95-4c7a-aa41-5c4ae2dc96fd # pilotes
+            -
+              __assoc__:
+                -
+                  - sectionUid
+                  - ff892292-fe95-4c7a-aa41-5c4ae2dc96fd # pilotes
+                -
+                  - allowGuestSubmissions
+                  - '1'
+                -
+                  - enabledByDefault
+                  - '1'
+                -
+                  - runValidation
+                  - '1'
+                -
+                  - authorUid
+                  - f2ddd9c2-0d1b-4341-9c50-69fa57b2a633
+          -
+            - 3e570fea-12ba-4b44-beb1-5fffeed5f4c5 # pilogens
+            -
+              __assoc__:
+                -
+                  - sectionUid
+                  - 3e570fea-12ba-4b44-beb1-5fffeed5f4c5 # pilogens
+                -
+                  - allowGuestSubmissions
+                  - '1'
+                -
+                  - enabledByDefault
+                  - '1'
+                -
+                  - runValidation
+                  - '1'
+                -
+                  - authorUid
+                  - f2ddd9c2-0d1b-4341-9c50-69fa57b2a633
+          -
+            - 029794bd-8c92-407b-be2c-2a35cb09533b # piloture
+            -
+              __assoc__:
+                -
+                  - sectionUid
+                  - 029794bd-8c92-407b-be2c-2a35cb09533b # piloture
+                -
+                  - allowGuestSubmissions
+                  - '1'
+                -
+                  - enabledByDefault
+                  - '1'
+                -
+                  - runValidation
+                  - '1'
+                -
+                  - authorUid
+                  - f2ddd9c2-0d1b-4341-9c50-69fa57b2a633
+          -
+            - 6b58fdbf-150e-4d17-9afa-ee8bfb0baed9 # Action
+            -
+              __assoc__:
+                -
+                  - sectionUid
+                  - 6b58fdbf-150e-4d17-9afa-ee8bfb0baed9 # Action
+                -
+                  - allowGuestSubmissions
+                  - '1'
+                -
+                  - enabledByDefault
+                  - '1'
+                -
+                  - runValidation
+                  - '1'
+                -
+                  - authorUid
+                  - f2ddd9c2-0d1b-4341-9c50-69fa57b2a633
+          -
+            - 7db4d317-2c4e-4296-8589-93616db7aed0 # Article
+            -
+              __assoc__:
+                -
+                  - sectionUid
+                  - 7db4d317-2c4e-4296-8589-93616db7aed0 # Article
+                -
+                  - allowGuestSubmissions
+                  - '1'
+                -
+                  - enabledByDefault
+                  - '1'
+                -
+                  - runValidation
+                  - '1'
+                -
+                  - authorUid
+                  - f2ddd9c2-0d1b-4341-9c50-69fa57b2a633
+          -
+            - 6d6502b0-1b03-47c3-95ac-89cf8075119f # Blog
+            -
+              __assoc__:
+                -
+                  - sectionUid
+                  - 6d6502b0-1b03-47c3-95ac-89cf8075119f # Blog
+                -
+                  - allowGuestSubmissions
+                  - '1'
+                -
+                  - enabledByDefault
+                  - '1'
+                -
+                  - runValidation
+                  - '1'
+                -
+                  - authorUid
+                  - f2ddd9c2-0d1b-4341-9c50-69fa57b2a633
+          -
+            - 2b8d03c2-82de-4336-8c4b-f185a83c655a # Moment
+            -
+              __assoc__:
+                -
+                  - sectionUid
+                  - 2b8d03c2-82de-4336-8c4b-f185a83c655a # Moment
+                -
+                  - allowGuestSubmissions
+                  - '1'
+                -
+                  - enabledByDefault
+                  - '1'
+                -
+                  - runValidation
+                  - '1'
+                -
+                  - authorUid
+                  - f2ddd9c2-0d1b-4341-9c50-69fa57b2a633
+          -
+            - 910dfa67-9d7d-4177-89ed-2fd338ad3cd8 # Msg
+            -
+              __assoc__:
+                -
+                  - sectionUid
+                  - 910dfa67-9d7d-4177-89ed-2fd338ad3cd8 # Msg
+                -
+                  - allowGuestSubmissions
+                  - '1'
+                -
+                  - enabledByDefault
+                  - '1'
+                -
+                  - runValidation
+                  - '1'
+                -
+                  - authorUid
+                  - f2ddd9c2-0d1b-4341-9c50-69fa57b2a633
+          -
+            - 6f5631e2-4590-4486-a207-c8f6d670e07e # Tag
+            -
+              __assoc__:
+                -
+                  - sectionUid
+                  - 6f5631e2-4590-4486-a207-c8f6d670e07e # Tag
+                -
+                  - allowGuestSubmissions
+                  - '1'
+                -
+                  - enabledByDefault
+                  - '1'
+                -
+                  - runValidation
+                  - '1'
+                -
+                  - authorUid
+                  - f2ddd9c2-0d1b-4341-9c50-69fa57b2a633
+          -
+            - 778b148a-6bcf-4d14-998f-6db6d6dc01fc # Groupe
+            -
+              __assoc__:
+                -
+                  - sectionUid
+                  - 778b148a-6bcf-4d14-998f-6db6d6dc01fc # Groupe
+                -
+                  - allowGuestSubmissions
+                  - '1'
+                -
+                  - enabledByDefault
+                  - '1'
+                -
+                  - runValidation
+                  - '1'
+                -
+                  - authorUid
+                  - f2ddd9c2-0d1b-4341-9c50-69fa57b2a633
+          -
+            - 5f8fa8ba-60f9-4702-9280-e50ea7873d1c # Inscrit
+            -
+              __assoc__:
+                -
+                  - sectionUid
+                  - 5f8fa8ba-60f9-4702-9280-e50ea7873d1c # Inscrit
+                -
+                  - allowGuestSubmissions
+                  - '1'
+                -
+                  - enabledByDefault
+                  - '1'
+                -
+                  - runValidation
+                  - '1'
+                -
+                  - authorUid
+                  - f2ddd9c2-0d1b-4341-9c50-69fa57b2a633
+          -
+            - 4346d328-a60e-4f1c-91b0-32ce6f864fc4 # Abo
+            -
+              __assoc__:
+                -
+                  - sectionUid
+                  - 4346d328-a60e-4f1c-91b0-32ce6f864fc4 # Abo
+                -
+                  - allowGuestSubmissions
+                  - '1'
+                -
+                  - enabledByDefault
+                  - '1'
+                -
+                  - runValidation
+                  - '1'
+                -
+                  - authorUid
+                  - f2ddd9c2-0d1b-4341-9c50-69fa57b2a633
+          -
+            - 4c349411-fa69-445e-8af6-d6c9028b1530 # Activite
+            -
+              __assoc__:
+                -
+                  - sectionUid
+                  - 4c349411-fa69-445e-8af6-d6c9028b1530 # Activite
+                -
+                  - allowGuestSubmissions
+                  - '1'
+                -
+                  - enabledByDefault
+                  - '1'
+                -
+                  - runValidation
+                  - '1'
+                -
+                  - authorUid
+                  - f2ddd9c2-0d1b-4341-9c50-69fa57b2a633
+          -
+            - b40728d2-050f-4fff-9667-3f80946369ac # Desc
+            -
+              __assoc__:
+                -
+                  - sectionUid
+                  - b40728d2-050f-4fff-9667-3f80946369ac # Desc
+                -
+                  - allowGuestSubmissions
+                  - '1'
+                -
+                  - enabledByDefault
+                  - '1'
+                -
+                  - runValidation
+                  - '1'
+                -
+                  - authorUid
+                  - f2ddd9c2-0d1b-4341-9c50-69fa57b2a633
+system:
+  edition: solo
+  live: true
+  name: a
+  retryDuration: null
+  schemaVersion: 5.7.0.3
+  timeZone: Europe/Paris

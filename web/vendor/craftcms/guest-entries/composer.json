@@ -1,0 +1,60 @@
+{
+  "name": "craftcms/guest-entries",
+  "description": "This plugin allows you to save guest entries from the front-end of your website.",
+  "type": "craft-plugin",
+  "keywords": [
+    "cms",
+    "craftcms",
+    "guest",
+    "entries",
+    "yii2"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Pixel & Tonic",
+      "homepage": "https://pixelandtonic.com/"
+    }
+  ],
+  "support": {
+    "email": "support@craftcms.com",
+    "issues": "https://github.com/craftcms/guest-entries/issues?state=open",
+    "source": "https://github.com/craftcms/guest-entries",
+    "docs": "https://github.com/craftcms/guest-entries/blob/v2/README.md",
+    "rss": "https://github.com/craftcms/guest-entries/commits/v2.atom"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require": {
+    "craftcms/cms": "^4.0.0-RC3|^5.0.0-beta.1"
+  },
+  "require-dev": {
+    "craftcms/ecs": "dev-main",
+    "craftcms/phpstan": "dev-main",
+    "craftcms/rector": "dev-main"
+  },
+  "autoload": {
+    "psr-4": {
+      "craft\\guestentries\\": "src/"
+    }
+  },
+  "scripts": {
+    "check-cs": "ecs check --ansi",
+    "fix-cs": "ecs check --ansi --fix",
+    "phpstan": "phpstan --memory-limit=1G"
+  },
+  "extra": {
+    "name": "Guest Entries",
+    "handle": "guest-entries",
+    "documentationUrl": "https://github.com/craftcms/guest-entries/blob/v2/README.md"
+  },
+  "config": {
+    "platform": {
+      "php": "8.0.2"
+    },
+    "allow-plugins": {
+      "yiisoft/yii2-composer": true,
+      "craftcms/plugin-installer": true
+    }
+  }
+}

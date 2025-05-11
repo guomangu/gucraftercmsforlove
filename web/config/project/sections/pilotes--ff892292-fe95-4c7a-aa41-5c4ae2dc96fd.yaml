@@ -1,0 +1,28 @@
+defaultPlacement: end
+enableVersioning: true
+entryTypes:
+  -
+    uid: ba425b92-d80c-4d12-874e-0b64d61cd292 # pilotes
+handle: pilotes
+maxAuthors: 1
+name: pilotes
+previewTargets:
+  -
+    __assoc__:
+      -
+        - label
+        - 'Primary entry page'
+      -
+        - urlFormat
+        - '{url}'
+      -
+        - refresh
+        - '1'
+propagationMethod: all
+siteSettings:
+  03e942c5-fa2f-4d2a-b7e5-52766f07b3b2: # a
+    enabledByDefault: true
+    hasUrls: true
+    template: pilotes/_entry.twig
+    uriFormat: 'pilotes/{slug}'
+type: channel

@@ -1,0 +1,78 @@
+
+{# <input id="sea" placeholder="Rechercher un pilote" class="form-control" /> #}
+
+{# Formulaire de recherche #}
+
+<form method="post" accept-charset="UTF-8" enctype="multipart/form-data">
+    {{ csrfInput() }} {# Important pour la sécurité CSRF #}
+    {# {{ actionInpust('guest-entries/save') }} #}
+    {{ actionInput('entries/save-entry') }}
+    {{ redirectInput('liste-voitures?success=222') }} {# Redirige vers cette même page après succès (optionnel) #}
+    <input placeholder="Rechercher un pilote" class="form-control sea" />
+
+
+    {# Champs du deuxième formulaire #}
+    {{ hiddenInput('sectionId', 5) }}
+    {# {{ hiddenInput('entryId', pilote.id) }} #}
+    {# <input type="hidden" name="title" value="{{ pilote.title ?? null }}"> #}
+    <input type="hidden" name="fields[voitures][]" value="{{ voiture.id }}">
+    {# <input type="hidden" id="recois_id_pilote" name="fields[pilotes][]"> #}
+    <select id="recois_id_pilote" name="fields[pilotes][]">
+    </select>
+
+
+    <input type="hidden" name="slug" value="{{ voiture.title ?? null }}">
+    {# {{ hiddenInput('entryId', user.id) }} #}
+    {# <input type="hidden" name="fields[pilotes][]" value="{{ pilote.id ?? null }}"> #}
+    {# <input type="hidden" name="fields[gens][0][pilotes][]" value="{{ pilote.id ?? null }}"> #}
+    <input type="submit" value="LIER">
+</form>     
+
+
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+    const searchInputs = document.querySelectorAll('.sea'); // Sélectionner TOUS les inputs avec l'ID 'sea'
+
+    searchInputs.forEach(searchInput => { // Ajouter un écouteur d'événements à chaque input
+        searchInput.addEventListener('input', function() {
+            const query = this.value; // 'this' fait référence à l'input 'sea' actuel
+            const form = this.closest('form'); // Remonter dans le DOM pour trouver le formulaire parent le plus proche
+            const resultContainer = form.querySelector('#recois_id_pilote'); // Sélectionner le select DANS ce formulaire
+
+            // Effectuer une requête AJAX pour récupérer les résultats de recherche
+            fetch('/index.php?action=graphql/api', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    query: `
+                        query MyQuery {
+                            pilotesEntries(search: "${query}" , limit:9) {
+                                ... on pilotes_Entry {
+                                    id
+                                    title
+                                }
+                            }
+                        }
+                    `
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Traiter les résultats de la recherche et mettre à jour le conteneur de résultats
+                const results = data.data.pilotesEntries;
+                resultContainer.innerHTML = ''; // Vider le conteneur avant d'ajouter les nouveaux résultats
+
+                results.forEach(entry => {
+                    const option = document.createElement('option');
+                    option.value = entry.id; // ID du pilote
+                    option.textContent = entry.title; // Nom du pilote
+                    resultContainer.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Erreur lors de la recherche :', error));
+        });
+    });
+});
+</script>

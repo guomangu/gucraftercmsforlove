@@ -1,0 +1,9 @@
+baseUrl: $ROUTINE_URL
+enabled: true
+handle: routine
+hasUrls: true
+language: fr
+name: routine
+primary: false
+siteGroup: 8a6cd0b3-d0ff-4c2b-9142-ff50b5cf8a16 # a
+sortOrder: 3

@@ -1,0 +1,115 @@
+color: null
+fieldLayouts:
+  59b46c65-458f-4181-9604-a6c485effc45:
+    tabs:
+      -
+        elementCondition: null
+        elements:
+          -
+            autocapitalize: true
+            autocomplete: false
+            autocorrect: true
+            class: null
+            dateAdded: '2025-03-29T23:39:51+00:00'
+            disabled: false
+            elementCondition: null
+            id: null
+            includeInCards: false
+            inputType: null
+            instructions: null
+            label: null
+            max: null
+            min: null
+            name: null
+            orientation: null
+            placeholder: null
+            providesThumbs: false
+            readonly: false
+            required: true
+            size: null
+            step: null
+            tip: null
+            title: null
+            type: craft\fieldlayoutelements\entries\EntryTitleField
+            uid: bac368dc-6431-473d-9492-187ab07117ed
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-03-29T23:44:40+00:00'
+            elementCondition: null
+            fieldUid: e5131bdd-7b21-4287-992b-d2504987a1a6 # Marque
+            handle: null
+            includeInCards: false
+            instructions: null
+            label: null
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: 55f817e2-6b12-469a-b4b2-95177f278b7a
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-03-29T23:44:40+00:00'
+            elementCondition: null
+            fieldUid: 9b987a32-67f0-4c54-920b-73bf016c0372 # photoVoiture
+            handle: null
+            includeInCards: false
+            instructions: null
+            label: null
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: f73554dc-9a68-49a7-a335-f2003a203137
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-03-29T23:44:40+00:00'
+            elementCondition: null
+            fieldUid: 59aacfcf-933c-4521-a3c9-e25dff69e354 # Annee
+            handle: null
+            includeInCards: false
+            instructions: null
+            label: null
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: 880dc1d2-dfb1-4953-b04a-0ee3180f192b
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-03-30T02:55:19+00:00'
+            elementCondition: null
+            fieldUid: 5c005119-58f0-4eee-ad8c-32984a2686c3 # pilotes
+            handle: null
+            includeInCards: false
+            instructions: null
+            label: null
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: b6711af0-c637-4d4f-bf95-e0026696a973
+            userCondition: null
+            warning: null
+            width: 100
+        name: Content
+        uid: 38316f49-e725-4aae-8576-6685ba627d6c
+        userCondition: null
+handle: voituresStandard
+hasTitleField: true
+icon: null
+name: 'Voitures standard'
+showSlugField: true
+showStatusField: true
+slugTranslationKeyFormat: null
+slugTranslationMethod: site
+titleFormat: null
+titleTranslationKeyFormat: null
+titleTranslationMethod: site

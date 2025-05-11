@@ -1,0 +1,57 @@
+{% block content %}
+
+{% if user is not defined %}
+    {% set user = craft.entries().id(257).one() %}
+{% endif %}
+
+
+{% set latestmsgu = craft.entries()
+.section('desc')
+.relatedTo({
+    targetElement: user,
+    field: 'gens'
+})
+.orderBy('dateCreated DESC')
+.limit(9)
+.all() %}
+
+
+
+{% set uniqueconv = [] %}
+{% set tempIdentifiers = [] %}
+{% for object in latestmsgu %}
+    {% set identifier = object.universel[0].id %}
+    {% if identifier not in tempIdentifiers %}
+        {% set uniqueconv = uniqueconv|merge([object]) %}
+        {% set tempIdentifiers = tempIdentifiers|merge([identifier]) %}
+    {% endif %}
+{% endfor %}
+
+
+<div style="text-align:center;">
+    <span class="text-muted">
+        {{ uniqueconv|length }} Conversations
+    </span>
+    <br>
+{% for msg in uniqueconv %}
+    <button class="btn btn-outline-dark" style="" type="button" data-bs-toggle="collapse" data-bs-target="#p-form-{{ msg.universel[0].id }}" aria-expanded="false" aria-controls="#p-form-{{ msg.universel[0].id }}">
+        <span>{{msg.universel[0].title}}</span>
+        <div>
+            <small class="text-muted">
+                {% include "xx.twig" with {
+                    obj: msg.universel[0],
+                } %}
+            </small>
+        </div>
+    </button>
+    <div class="collapse" id="p-form-{{ msg.universel[0].id }}">
+        {% include "d.twig" with {
+            obj: msg.universel[0],
+            user: user
+        } %}
+    </div>
+{% endfor %}
+</div>
+
+
+{% endblock %}

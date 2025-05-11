@@ -1,0 +1,53 @@
+{% set latesttag = craft.entries()
+.section('tag')
+.relatedTo({
+    targetElement: groupe,
+    field: 'groupe'
+})
+.orderBy('dateCreated DESC')
+.limit(22)
+.all() %}
+
+{% for tag in latesttag %}
+    <span class="btn btn-outline-secondary">{{tag.title}}</span>
+
+    {# {% set liketag = craft.entries()
+    .section('tag')
+    .where(['like', 'title', tag.title])
+    .where(['!=', 'id', tag.id])
+    .orderBy('dateCreated DESC')
+    .limit(7)
+    .all() %}
+
+    {% if liketag|length > 0 %}
+        {% for tagg in liketag %}
+            {% set othergroupe = tagg.groupe %}
+                {% for g in othergroupe %}
+                    {% if g.id != groupe.id %}
+                        <span class="btn">{{g.title}}</span>
+                    {% endif %}
+                {% endfor %}
+        {% endfor %}
+
+    {% endif %} #}
+    
+{% endfor %}
+
+
+
+
+<form method="post" id="v-form" class="add-action-form" accept-charset="UTF-8" enctype="multipart/form-data">
+    {{ csrfInput() }}
+    {{ actionInput('guest-entries/save') }}
+    {{ hiddenInput('sectionId', 10) }} {# Assurez-vous que 7 est le bon ID de section #}
+    {{ hiddenInput('enabled', '1') }}
+    {# Assurez-vous que 'mom' est disponible et a un 'id' #}
+    <input type="hidden" name="fields[groupe][]" value="{{ groupe.id }}">
+
+    <div class="mb-3">
+        <input id="title" type="text" name="title" class="form-control" placeholder="Ajouter un tag" required>
+    </div>
+
+    {# Bouton plus petit (btn-sm) et pleine largeur (w-100) pour un accès facile sur mobile #}
+    <button type="submit" class="btn btn-dark btn-sm w-100">Ajouter le tag</button>
+</form>

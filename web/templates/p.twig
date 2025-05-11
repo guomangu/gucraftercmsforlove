@@ -1,0 +1,219 @@
+{% block content %}
+
+{# {% set adm = groupe.gensadmin[0] %} #}
+
+
+{% set abos = craft.entries()
+.section('inscrit')
+.relatedTo({
+    targetElement: groupe,
+    field: 'obj'
+})
+.limit(17)
+.all() %}
+
+{# Conteneur principal pour aligner les personnes #}
+<div class="d-flex flex-wrap justify-content-center align-items-start gap-3">
+
+    {# Boucle sur chaque personne inscrite dans le groupe #}
+    {% for abo in abos %}
+        {# Bloc pour une personne (image + nom) #}
+        <div class="text-center border-danger" style="max-width: 136px;"> {# Largeur fixe pour contrôler l'espacement #}
+
+            {# Récupération de l'image #}
+            {% set image = abo.gens[0].img.one() %}
+
+            {# Condition pour afficher l'image ou le placeholder #}
+            {% if image %}
+                {# Affichage de l'image en bulle #}
+                <img src="{{ image.getUrl({width: 120, height: 120, mode: 'crop', quality: 80}) }}" {# Taille source un peu plus grande #}
+                     alt="Photo de {{ abo.gens[0].title }}" {# Texte alternatif descriptif #}
+                     class="rounded-circle shadow-sm mb-1 mx-auto d-block" {# Bulle + Ombre légère + Marge en bas + Centrage #}
+                     style="width: 60px; height: 60px; object-fit: cover; background-color: #f8f9fa;" {# Taille fixe + Remplissage + Fond clair si image transparente #}
+                     loading="lazy"> {# Chargement différé pour les images #}
+            {% else %}
+                {# Placeholder si pas d'image : icône dans un cercle #}
+                <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center shadow-sm mb-1 mx-auto"
+                     style="width: 60px; height: 60px;"
+                     title="Pas d'image pour {{ abo.gens[0].title }}"> {# Tooltip indiquant l'absence d'image #}
+                     {# Icône Bootstrap (Personne) #}
+                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
+                        <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                     </svg>
+                </div>
+            {% endif %}
+
+            {# Affichage du nom sous la bulle #}
+            <p class="mb-0 small" style="line-height: 1.2; overflow-wrap: break-word;"> {# Texte petit, marge bas nulle, hauteur de ligne réduite, gestion des mots longs #}
+                {{ abo.gens[0].title }}
+            </p>
+            <p class="mb-0 small btn btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#abo-{{ abo.id }}" aria-expanded="false" aria-controls="#abo-{{ abo.id }}" style="line-height: 1.2; overflow-wrap: break-word;"> {# Texte petit, marge bas nulle, hauteur de ligne réduite, gestion des mots longs #}
+                {{ abo.title }}
+
+                {# <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#abo-{{ abo.id }}" aria-expanded="false" aria-controls="#abo-{{ abo.id }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>  
+                    </svg>
+                </button> #}
+            </p>
+
+        </div>
+
+    {% else %}
+        {# Message si aucune personne n'est inscrite #}
+        <p class="text-muted fst-italic">Aucune personne inscrite dans ce groupe pour le moment.</p>
+
+    {% endfor %} {# Fin de la boucle sur les personnes #}
+
+    {% for abo in abos %}
+        <div class="collapse" id="abo-{{ abo.id }}">
+                    {# Affichage de la description de l'abonnement #}
+                    {% include "d.twig" with {
+                        obj: abo,
+                        user: user
+                    } %}
+                </div>
+    {% endfor %}
+    
+</div>
+
+<br>
+<button class="btn" style="display: flex; place-self: center;" type="button" data-bs-toggle="collapse" data-bs-target="#p-form-{{ groupe.id }}" aria-expanded="false" aria-controls="#p-form-{{ groupe.id }}">
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="blue" class="bi bi-plus-circle" viewBox="0 0 16 16">
+        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>  
+    </svg>
+</button>
+
+<form method="post" id="p-form-{{ groupe.id }}" class="card card-body collapse border-info" accept-charset="UTF-8" enctype="multipart/form-data">
+    {{ csrfInput() }} {# Important pour la sécurité CSRF #}
+    {# {{ actionInpust('guest-entries/save') }} #}
+    {{ actionInput('guest-entries/save') }}
+    {{ hiddenInput('enabled', '1') }}
+    {{ hiddenInput('sectionId', 13) }}
+    <input type="hidden" name="fields[obj][]" value="{{ groupe.id }}"> {# ID du groupe #}
+    {# <input type="hidden" name="fields[gens][]" value="{{ user.id }}"> #}
+    {# 2. Ajouter un champ caché pour le groupe #}
+
+
+    {# 1. Ajouter des champs cachés pour TOUS les gens DÉJÀ liés #}
+    {# {% if groupe.gensinscrit is defined and groupe.gensinscrit.exists() %}
+        {% for existingPerson in groupe.gensinscrit.all() %}
+            <input type="hidden" name="fields[gensinscrit][]" value="{{ existingPerson.id }}">
+        {% endfor %}
+    {% endif %} #}
+
+    {# <input type="hidden" name="title" value="{{groupe.title}}"> #}
+
+    <div class="mb-3">
+        <label for="user-search-input" class="form-label">Rechercher un utilisateur</label>
+        <div class="input-group">
+            <input type="search" 
+                   id="user-search-input" 
+                   placeholder="Entrez un nom, prénom ou email..." 
+                   class="form-control sea" {# Gardé votre classe 'sea' si elle a un usage spécifique #}
+                   aria-label="Champ de recherche d'utilisateur" 
+                   aria-describedby="button-search-addon"
+                   {# Note: Ce champ déclenche généralement une recherche JS pour peupler le select ci-dessous #}
+                   {# Vous n'avez peut-être pas besoin d'un attribut 'name' ici si la recherche est purement JS #}
+                   {# name="query_search" #} 
+                   />
+            <button class="btn btn-outline-secondary" type="button" id="button-search-addon">
+                {# Icône de recherche Bootstrap Icons #}
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                </svg>
+            </button>
+        </div>
+        <div id="user-search-help" class="form-text">Tapez pour rechercher, les résultats apparaîtront ci-dessous.</div>
+    </div>
+
+    {# Champ Select pour choisir l'utilisateur trouvé #}
+    <div class="mb-3">
+        <label for="recois_id_pilote" class="form-label">Utilisateur trouvé</label>
+        <select id="recois_id_pilote" 
+                name="fields[gens][]" 
+                class="form-select" 
+                required 
+                aria-label="Sélectionnez l'utilisateur à inviter"
+                {# Ce select sera probablement peuplé par JavaScript suite à la recherche #}
+                >
+            <option value="" disabled selected>-- Sélectionnez dans les résultats --</option>
+            {# Exemple d'option ajoutée par JS: <option value="123">Jean Dupont</option> #}
+        </select>
+        {# Vous pouvez ajouter un message d'erreur ici en cas de besoin #}
+        {# <div class="invalid-feedback">Veuillez sélectionner un utilisateur.</div> #}
+    </div>
+
+    <div class="mb-3">
+        <label for="message" class="form-label">Message d'invitation</label>
+        <input id="message" name="title" class="form-control" placeholder="Message d'invitation" required></input>
+    </div>
+
+
+    {# Bouton de soumission #}
+    <button type="submit" class="btn btn-secondary d-inline-flex align-items-center">
+        {# Icône d'invitation Bootstrap Icons #}
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-plus-fill me-2" viewBox="0 0 16 16">
+          <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+          <path fill-rule="evenodd" d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z"/>
+        </svg>
+        Inviter cet utilisateur
+    </button>
+</form> 
+
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+    const searchInputs = document.querySelectorAll('.sea'); // Sélectionner TOUS les inputs avec l'ID 'sea'
+
+    searchInputs.forEach(searchInput => { // Ajouter un écouteur d'événements à chaque input
+        searchInput.addEventListener('input', function() {
+            const query = this.value; // 'this' fait référence à l'input 'sea' actuel
+            if (query.length < 1) {return}; // Ne pas effectuer la recherche si moins de 3 caractères{
+                
+            const form = this.closest('form'); // Remonter dans le DOM pour trouver le formulaire parent le plus proche
+            const resultContainer = form.querySelector('#recois_id_pilote'); // Sélectionner le select DANS ce formulaire
+
+            // Effectuer une requête AJAX pour récupérer les résultats de recherche
+            fetch('/index.php?action=graphql/api', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    query: `
+                        query MyQuery {
+                            gensEntries(search: "${query}" , limit:9) {
+                                ... on gens_Entry {
+                                id
+                                title
+                                }
+                            }
+                        }
+
+                    `
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // console.log(data); // Afficher la réponse dans la console pour le débogage
+                
+                // Traiter les résultats de la recherche et mettre à jour le conteneur de résultats
+                const results = data.data.gensEntries;
+                resultContainer.innerHTML = ''; // Vider le conteneur avant d'ajouter les nouveaux résultats
+
+                results.forEach(entry => {
+                    const option = document.createElement('option');
+                    option.value = entry.id; // ID du pilote
+                    option.textContent = entry.title; // Nom du pilote
+                    resultContainer.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Erreur lors de la recherche :', error));
+        });
+    });
+});
+</script>
+
+{% endblock %}

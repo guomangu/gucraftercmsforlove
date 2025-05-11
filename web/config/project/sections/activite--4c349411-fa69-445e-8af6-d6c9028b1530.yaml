@@ -1,0 +1,33 @@
+defaultPlacement: end
+enableVersioning: true
+entryTypes:
+  -
+    uid: 22f269b9-3aec-4df6-8c2b-e1eb2b36b3dd # activite
+handle: activite
+maxAuthors: 1
+name: Activite
+previewTargets:
+  -
+    __assoc__:
+      -
+        - label
+        - 'Primary entry page'
+      -
+        - urlFormat
+        - '{url}'
+      -
+        - refresh
+        - '1'
+propagationMethod: all
+siteSettings:
+  03e942c5-fa2f-4d2a-b7e5-52766f07b3b2: # a
+    enabledByDefault: true
+    hasUrls: true
+    template: activite/_entry.twig
+    uriFormat: 'activite/{slug}'
+  a7c10eaa-616c-4edf-8aa6-2ddc2e17d921: # agendafriends
+    enabledByDefault: true
+    hasUrls: true
+    template: activite/_entry.twig
+    uriFormat: 'activite/{slug}'
+type: channel

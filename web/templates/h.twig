@@ -1,0 +1,102 @@
+{% block content %}
+        {% if user is not null %} {# Vérification si l'utilisateur est connecté #}
+
+            {% set abos = craft.entries()
+                .section('abo')
+                .relatedTo({ targetElement: user, field: 'gens' })
+                .orderBy('dateCreated DESC')
+                .all() %}
+
+
+            <h4 class="mb-3">Vos abonnements:</h4> {# Titre de la section #}
+            
+            {% if abos is not empty %}
+                {# Utilisation de la grille Bootstrap pour afficher les cartes #}
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5">
+                    {% for g in abos %}
+                        {% set h = g %}{# Récupération du groupe lié #}
+                        {% set g = g.groupe.one() %} {# Récupération du groupe lié #}
+                        <div class="col">
+                            {# Chaque groupe est une carte cliquable #}
+                            <div class="card h-100 shadow-sm lift"> 
+                                <a href="{{ siteUrl }}m/{{ g.id }}" class="stretched-link text-decoration-none text-dark"></a> {# Lien invisible qui couvre la carte #}
+                                
+                                {# Image du groupe en haut de la carte #}
+                                {% set groupImage = g.img.one() %}
+                                {% if groupImage %}
+                                    <img src="{{ groupImage.getUrl({width: 400, height: 250, mode: 'crop', quality: 75}) }}" 
+                                         class="card-img-top" 
+                                         alt="{{ groupImage.alt ?? groupImage.title ?? g.title }}"
+                                         style="height: 200px; object-fit: cover;">
+                                {% else %}
+                                    {# Placeholder si pas d'image de groupe #}
+                                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center text-muted" 
+                                         style="height: 200px;">
+                                         <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-calendar-week" viewBox="0 0 16 16">
+                                           <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-5 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z"/>
+                                           <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+                                         </svg>
+                                    </div>
+                                {% endif %}
+
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title">{{ g.title }}</h5>
+                                    <p class="card-text small text-muted mb-2">
+                                        {{ g.art }} <br>
+                                        Zone: {{ g.zone }}
+                                    </p>
+                                    <h6>"{{h.title}}" <span class="small"> - {{h.inviteur[0].title}}</span></h6> {# Espace pour aligner le contenu #}
+                                    
+                                    {# Section Membres (bulles) #}
+                                    <div class="mt-auto pt-3 border-top"> {# Aligne en bas, ajoute espace et bordure #}
+                                        <h6 class="card-subtitle mb-2 text-muted small">Membres :</h6>
+                                        <div class="d-flex flex-wrap justify-content-start gap-2"> {# Ajustement du gap et justification #}
+                                            {% set members = g.gensinscrit.limit(5).all() %} {# Limiter pour l'aperçu #}
+                                            {% for gens in members %}
+                                                <div class="text-center" title="{{ gens.title }}"> {# Tooltip avec le nom #}
+                                                    {% set memberImage = gens.img.one() %}
+                                                    {% if memberImage %}
+                                                        <img src="{{ memberImage.getUrl({width: 60, height: 60, mode: 'crop', quality: 75}) }}" 
+                                                             alt="{{ gens.title }}" 
+                                                             class="rounded-circle shadow-sm" 
+                                                             style="width: 30px; height: 30px; object-fit: cover;" 
+                                                             loading="lazy">
+                                                    {% else %}
+                                                        <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center shadow-sm" 
+                                                             style="width: 30px; height: 30px; font-size: 0.7rem;">
+                                                             {# Initials ou icône simple #}
+                                                             {{ gens.title|slice(0, 1)|upper }}
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            {% endfor %}
+                                            {# Indication s'il y a plus de membres #}
+                                            {% if g.gensinscrit.count() > 5 %}
+                                                <div class="rounded-circle bg-light text-muted d-flex align-items-center justify-content-center" 
+                                                     style="width: 30px; height: 30px; font-size: 0.7rem;"
+                                                     title="{{ g.gensinscrit.count() - 5 }} autres membres">
+                                                    +{{ g.gensinscrit.count() - 5 }}
+                                                </div>
+                                            {% endif %}
+                                            {# Message si aucun membre (ne devrait pas arriver si user est inscrit ?) #}
+                                            {% if g.gensinscrit.count() == 0 %}
+                                                 <small class="text-muted fst-italic">Aucun membre.</small>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div> {# Fin Card Body #}
+                            </div> {# Fin Card #}
+                        </div> {# Fin Col #}
+                    {% endfor %}
+                </div> {# Fin Row (Grille de cartes) #}
+            {% else %}
+                <div class="alert alert-info" role="alert">
+                  Vous n'êtes inscrit dans aucun agenda pour le moment.
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="alert alert-warning" role="alert">
+                Vous devez être connecté pour voir vos groupes.
+            </div>
+        {% endif %}
+{% endblock %} {# Fin du bloc content #}

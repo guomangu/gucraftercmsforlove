@@ -1,0 +1,24 @@
+{% block content %}
+
+{% set latestins = craft.entries()
+.section('incrit')
+.relatedTo({
+    targetElement: act,
+    field: 'action'
+})
+.orderBy('dt asc')
+.limit(9) 
+.all() %}
+
+{{act.title}}
+{{ act.dt|date('d/m/Y') }}
+{{ act.city }}
+{{ act.zone }}
+
+{% for ins in latestins %}
+    
+{% endfor %}
+
+
+
+{% endblock %}

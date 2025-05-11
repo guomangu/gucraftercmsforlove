@@ -1,0 +1,38 @@
+{# Présumé être inclus dans un layout qui contient déjà les liens CSS/JS Bootstrap #}
+{# {% extends "_layout.twig" %} #}
+
+{% block content %}
+{% include "zz.twig" %}
+{# -- Vérification de l'état de connexion -- #}
+            {% set emailDepuisCookie = craft.app.session.get('loggedInGensId') %}
+            {% set entry = null %} {# Initialiser à null #}
+            {% if emailDepuisCookie is not null %}
+                {% set entry = craft.entries().id(emailDepuisCookie).one() %}
+            {% else %}
+                {% set entry = craft.entries().id(257).one() %}
+                {# {% set entry = craft.entries().section("gens").mail("a@gmail.com").one() %} #}
+            {% endif %}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        {# Limiter la largeur du contenu (surtout pour le formulaire) #}
+        <div class="col-md-8 col-lg-6 col-xl-5">
+            {# {% if entry.id == 257 %}
+            {% include "g.twig" %}
+            {% endif %} #}
+
+
+
+            {% include "s.twig" with {
+                user:entry
+            } %}
+
+
+
+
+
+        </div> {# Fin Col #}
+    </div> {# Fin Row #}
+</div> {# Fin Container #}
+
+{% endblock %}

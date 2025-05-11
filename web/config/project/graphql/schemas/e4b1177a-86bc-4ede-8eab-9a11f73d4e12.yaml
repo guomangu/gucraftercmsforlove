@@ -1,0 +1,25 @@
+isPublic: true
+name: 'Public Schema'
+scope:
+  - 'sites.03e942c5-fa2f-4d2a-b7e5-52766f07b3b2:read' # a
+  - 'sites.a7c10eaa-616c-4edf-8aa6-2ddc2e17d921:read' # agendafriends
+  - 'sites.d1c448cf-2bc2-42c7-95e7-4ce5a5e67575:read' # routine
+  - 'elements.drafts:read'
+  - 'elements.revisions:read'
+  - 'elements.inactive:read'
+  - 'sections.4346d328-a60e-4f1c-91b0-32ce6f864fc4:read' # Abo
+  - 'sections.6b58fdbf-150e-4d17-9afa-ee8bfb0baed9:read' # Action
+  - 'sections.4c349411-fa69-445e-8af6-d6c9028b1530:read' # Activite
+  - 'sections.7db4d317-2c4e-4296-8589-93616db7aed0:read' # Article
+  - 'sections.6d6502b0-1b03-47c3-95ac-89cf8075119f:read' # Blog
+  - 'sections.778b148a-6bcf-4d14-998f-6db6d6dc01fc:read' # Groupe
+  - 'sections.5f8fa8ba-60f9-4702-9280-e50ea7873d1c:read' # Inscrit
+  - 'sections.2b8d03c2-82de-4336-8c4b-f185a83c655a:read' # Moment
+  - 'sections.910dfa67-9d7d-4177-89ed-2fd338ad3cd8:read' # Msg
+  - 'sections.6f5631e2-4590-4486-a207-c8f6d670e07e:read' # Tag
+  - 'sections.9434ca7d-d978-4b3e-b98c-e00e8c4aedaf:read' # gens
+  - 'sections.3e570fea-12ba-4b44-beb1-5fffeed5f4c5:read' # pilogens
+  - 'sections.ff892292-fe95-4c7a-aa41-5c4ae2dc96fd:read' # pilotes
+  - 'sections.029794bd-8c92-407b-be2c-2a35cb09533b:read' # piloture
+  - 'sections.879ed238-6c41-49ca-bb35-e156a0f6b56a:read' # voitures
+  - 'volumes.0d874f90-596b-4955-b5f0-c6c493421528:read' # imgsvol

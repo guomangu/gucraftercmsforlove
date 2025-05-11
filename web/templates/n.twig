@@ -1,0 +1,115 @@
+{# Inclusion de Bootstrap (vous l'avez déjà fait) #}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<Doctype html>
+<html lang="fr">
+
+{% include "zz.twig" %}
+
+
+{# Si l'utilisateur est connecté, récupérer ses informations #}
+{% set emailDepuisCookie = craft.app.session.get('loggedInGensId') %}
+
+{# Vérifier si l'utilisateur est connecté #}
+{% if emailDepuisCookie is not null %}
+    {# L'utilisateur est connecté, vous pouvez afficher ses informations #}
+    {% set user = craft.entries().id(emailDepuisCookie).one() %}
+{% else %}
+    {# L'utilisateur n'est pas connecté, afficher un message ou rediriger #}
+    {# <p><strong>Aucun utilisateur connecté.</strong></p> #}
+    {% set user = craft.entries().id(257).one() %}
+{% endif %}
+
+
+
+{# ==== #}
+
+{% set activ = craft.entries()
+.section('activite')
+.id(number)
+.one() %}
+
+{% set latestaction = activ.action[0] %}
+
+{% set d = activ.d %}
+{% set t = activ.t %}
+
+{% set date_incomplete = activ.d %}
+{% set heure_souhaitee = t ~":00:00" %}
+
+{# Option A: Concaténation de chaînes #}
+{% set date_avec_heure_chaine = date_incomplete ~ " " ~ heure_souhaitee %}
+{% set datetimeu = date(date_avec_heure_chaine) %}
+
+
+
+
+{% set joursSemaine = {
+    1: 'Lundi',
+    2: 'Mardi',
+    3: 'Mercredi',
+    4: 'Jeudi',
+    5: 'Vendredi',
+    6: 'Samedi',
+    7: 'Dimanche'
+} %}
+
+
+<div class="container mt-4 mb-5"> {# Conteneur principal avec marges verticales #}
+
+<div class="activity-details p-2"> {# Un conteneur avec un peu de padding #}
+    <p class="text-muted mb-1 small text-uppercase">Activité :</p> {# Label discret #}
+
+    <h5 class="fw-bold mb-1">{{ activ.title }}</h5> {# Titre de l'activité en gras #}
+    <p class="text-muted mb-2"><i class="bi bi-geo-alt-fill me-1"></i>{{ activ.zone }}</p> {# Zone avec une icône (optionnel) #}
+
+    <div class="d-flex align-items-center text-muted small"> {# Conteneur flex pour la date et l'heure #}
+        <i class="bi bi-calendar-event me-2"></i> {# Icône calendrier #}
+        <span>{{ datetimeu|date("l d F") }}</span>
+        <span class="mx-1">à</span>
+        <i class="bi bi-clock me-1"></i> {# Icône horloge #}
+        <span>{{ datetimeu|date("H:i") }}h</span>
+    </div>
+</div>
+
+{# Note : Pour les icônes (bi-geo-alt-fill, bi-calendar-event, bi-clock),
+   vous devez avoir inclus Bootstrap Icons dans votre projet.
+   Exemple : <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+   Si vous ne les utilisez pas, retirez simplement les balises <i>. #}
+
+    <div>
+        {% include "aa.twig" with {
+            obj:activ
+        } %}
+    </div>
+
+    {% include "e.twig" with {
+        obj: activ,
+        user: user
+    } %}
+
+    <div class="">
+        {% include "d.twig" with {
+            obj: activ,
+            user: user
+        } %}
+    </div>
+
+    <div>
+        {% include "y.twig" with {
+            obj: activ,
+            user: user,
+        } %}
+    </div>
+</div>
+
+
+{% include "o.twig" with {
+    latestaction: latestaction,
+} %}
+
+
+{% include "e.twig" with {
+    obj: latestaction,
+    user: user
+} %}

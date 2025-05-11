@@ -1,0 +1,17 @@
+{% set pUtilisateurCookie = craft.app.request.cookies.get('pUtilisateur') %}
+{% set emailUtilisateurCookie = craft.request.getCookie('emailUtilisateur') %}
+<p>Cookie : {{ pUtilisateurCookie}}</p><p>{{emailUtilisateurCookie}}</p>
+
+{% set compte = craft.entries().section('gens').where({ pass: pUtilisateurCookie, mail: emailUtilisateurCookie }).one() %}
+{% if compte %}
+    <h1>Bienvenue {{ compte.title }}</h1>
+    <p>Email : {{ compte.mail }}</p>
+{% else %}
+    <h1>Bienvenue sur votre compte</h1>
+    <p>Veuillez vous connecter pour accéder à votre compte.</p>
+{% endif %}
+
+<script>
+let nomUtilisateur = getCookie('pUtilisateur');
+let emailUtilisateur = getCookie('emailUtilisateur');
+</script

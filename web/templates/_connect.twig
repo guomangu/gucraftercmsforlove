@@ -1,0 +1,94 @@
+{# --- Début du template --- #}
+<pre>{{dump(craft.app.request.cookies)}}</pre> {# Pour déboguer les cookies reçus #}
+
+{# 1. Tenter de lire le cookie DE LA REQUETE ACTUELLE (issu d'une connexion précédente) #}
+{% set emailDepuisCookie = craft.app.request.cookies.get('eemailUtilisateur') %}
+<p>DEBUG: Email lu depuis cookie au début: {{ emailDepuisCookie  }}</p>
+{# Décommenter pour voir TOUS les cookies reçus au début #}
+{# <pre>Cookies Reçus au début: {{ dump(craft.app.request.cookies) }}</pre> #}
+
+{% set message = '' %}
+{% set isLoggedIn = emailDepuisCookie is not null %} {# Est-on déjà connecté ? #}
+
+{# 2. Traiter les actions POST (Connexion ou Déconnexion) #}
+{% if craft.app.request.isPost %}
+
+    {# A. Action de Déconnexion ? #}
+    {% if craft.app.request.getBodyParam('deconnection') is not null %}
+        {% header "Set-Cookie: eemailUtilisateur=; Max-Age=0; Path=/; HttpOnly" %} {# Supprime pour la prochaine requête #}
+        {% set isLoggedIn = false %} {# Met à jour l'état pour CET affichage #}
+        {% set emailDepuisCookie = null %} {# Efface la variable locale #}
+        {% set message = '<p style="color: green;">Vous avez été déconnecté.</p>' %}
+
+    {# B. Action de Connexion ? (Pas de déconnexion) #}
+    {% else %}
+        {% set emailSoumis = craft.app.request.getBodyParam('email') %}
+        {# ATTENTION SECURITE: 'nom' est utilisé comme mot de passe #}
+        {% set motDePasseSoumis = craft.app.request.getBodyParam('nom') %}
+
+        {# !!! ALERTE SECURITE MAJEURE !!! #}
+        {# NE JAMAIS COMPARER UN MOT DE PASSE EN CLAIR COMME CECI #}
+        {# Utilisez un système de hachage sécurisé (bcrypt) #}
+        {% set compte = craft.entries()
+            .section('gens')
+            .where({ mail: emailSoumis })
+            .one() %}
+
+        {# Remplacer cette ligne par une vérification de hash sécurisée ! #}
+        {% if compte and compte.pass == motDePasseSoumis %}
+            {# Connexion Réussie #}
+            {% header "Set-Cookie: eemailUtilisateur=" ~ compte.mail ~ "; Max-Age=Session; Path=/; HttpOnly" %}
+
+
+
+
+
+
+            {% set isLoggedIn = true %} {# Met à jour l'état pour CET affichage #}
+            {% set emailDepuisCookie = compte.mail %} {# Met à jour la variable locale #}
+            {% set message = '<p style="color: green;">Bienvenue ' ~ compte.title ~ '! Connexion réussie.</p>' %}
+        {% else %}
+            {# Connexion Échouée #}
+            {% set isLoggedIn = false %} {# Assure l'état déconnecté #}
+            {% set message = '<p style="color: red;">Échec de la connexion. Email ou mot de passe incorrect.</p>' %}
+        {% endif %}
+    {% endif %} {# Fin if/else connexion/déconnexion #}
+
+{% endif %} {# Fin if isPost #}
+
+{# 3. Affichage Conditionnel basé sur l'état de connexion final #}
+{{ message|raw }} {# Affiche les messages de succès/erreur #}
+
+{% if isLoggedIn %}
+    <p><strong>Connecté en tant que : {{ emailDepuisCookie }}</strong></p>
+    {# Formulaire de déconnexion #}
+    <form method="post" action="">
+        {{ csrfInput() }}
+        <button name="deconnection" type="submit">Déconnexion</button>
+    </form>
+{% else %}
+    <p><strong>Veuillez vous connecter.</strong></p>
+    {# Formulaire de connexion #}
+    <form id="monFormulaire" method="post" action="">
+        {{ csrfInput() }}
+        <div>
+            <label for="email">Email :</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div>
+            {# Changer le type en password pour masquer la saisie #}
+            <label for="nom">Mot de passe :</label>
+            <input type="password" id="nom" name="nom" required>
+        </div>
+        <button type="submit">Envoyer</button>
+    </form>
+    {# {% include "users.twig" %} #} {# Si le formulaire est dans un autre fichier #}
+{% endif %}
+
+
+{# Note de sécurité importante #}
+{# <hr>
+<p style="background-color: #ffcccc; padding: 10px; border: 1px solid red;">
+    <strong>!!! AVERTISSEMENT DE SÉCURITÉ MAJEURE !!!</strong><br>
+    Ce code compare un mot de passe soumis (`nom`) directement avec une valeur stockée (`compte.pass`). Ceci est une **faille de sécurité critique** si les mots de passe ne sont pas stockés sous forme de hash sécurisé (ex: bcrypt). Ne stockez jamais de mots de passe en clair. Utilisez les Users Craft intégrés ou implémentez correctement `password_hash()` et `password_verify()` en PHP si vous gérez l'authentification vous-même.
+</p> #}

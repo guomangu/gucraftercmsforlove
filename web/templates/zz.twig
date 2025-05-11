@@ -1,0 +1,41 @@
+{% block content %}
+
+{% if craft.app.session.hasFlash('notice') %}
+    <div class="alert alert-success">{{ craft.app.session.getFlash('notice') }}</div>
+{% endif %}
+{% if craft.app.session.hasFlash('error') %}
+    <div class="alert alert-danger">{{ craft.app.session.getFlash('error') }}</div>
+{% endif %}
+
+{# Si l'utilisateur est connecté, récupérer ses informations #}
+{% set emailDepuisCookie = craft.app.session.get('loggedInGensId') %}
+
+{# Vérifier si l'utilisateur est connecté #}
+{% if emailDepuisCookie is not null %}
+    {# L'utilisateur est connecté, vous pouvez afficher ses informations #}
+    {% set user = craft.entries().id(emailDepuisCookie).one() %}
+{% else %}
+    {# L'utilisateur n'est pas connecté, afficher un message ou rediriger #}
+    {# <p><strong>Aucun utilisateur connecté.</strong></p> #}
+    {% set user = craft.entries().id(257).one() %}
+{% endif %}
+
+<div class="m-2 p-2" style="
+    position: fixed;
+    top: 0px;
+    background-color: #8dd5ffde;
+    border-radius: 9px;
+    z-index: 100;
+    min-width: 91%;
+    justify-self: anchor-center;
+    -webkit-box-shadow: 0px 0px 22px 11px rgba(255,255,255,0.7), 0px 0px 22px 11px rgba(255,255,255,0.7); 
+    box-shadow: 0px 0px 22px 11px rgba(255,255,255,0.7), 0px 0px 22px 11px rgba(255,255,255,0.7);
+    ">
+    <a class="btn btn-dark" href="/f/{{user.id}}">{{user.title}}</a>
+    <a class="btn btn-outline-dark" href="/u/">Search</a>
+
+    {% include "zzz.twig" %}
+</div>
+
+<div style="height:77px;"></div>
+{% endblock %}

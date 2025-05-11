@@ -1,0 +1,33 @@
+defaultPlacement: end
+enableVersioning: false
+entryTypes:
+  -
+    uid: 2b3fd0f8-3213-4436-a5b6-8c5aa05aa1fd # tag
+handle: tag
+maxAuthors: 1
+name: Tag
+previewTargets:
+  -
+    __assoc__:
+      -
+        - label
+        - 'Primary entry page'
+      -
+        - urlFormat
+        - '{url}'
+      -
+        - refresh
+        - '1'
+propagationMethod: all
+siteSettings:
+  03e942c5-fa2f-4d2a-b7e5-52766f07b3b2: # a
+    enabledByDefault: true
+    hasUrls: true
+    template: tag/_entry.twig
+    uriFormat: 'tag/{slug}'
+  a7c10eaa-616c-4edf-8aa6-2ddc2e17d921: # agendafriends
+    enabledByDefault: true
+    hasUrls: true
+    template: tag/_entry.twig
+    uriFormat: 'tag/{slug}'
+type: channel

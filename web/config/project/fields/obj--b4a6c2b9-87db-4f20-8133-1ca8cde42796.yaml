@@ -1,0 +1,30 @@
+columnSuffix: null
+handle: obj
+instructions: null
+name: obj
+searchable: false
+settings:
+  allowSelfRelations: false
+  branchLimit: null
+  defaultPlacement: end
+  maintainHierarchy: false
+  maxRelations: null
+  minRelations: null
+  selectionLabel: null
+  showCardsInGrid: false
+  showSiteMenu: false
+  showUnpermittedEntries: false
+  showUnpermittedSections: false
+  sources:
+    - 'section:6b58fdbf-150e-4d17-9afa-ee8bfb0baed9' # Action
+    - 'section:4c349411-fa69-445e-8af6-d6c9028b1530' # Activite
+    - 'section:6d6502b0-1b03-47c3-95ac-89cf8075119f' # Blog
+    - 'section:9434ca7d-d978-4b3e-b98c-e00e8c4aedaf' # gens
+    - 'section:778b148a-6bcf-4d14-998f-6db6d6dc01fc' # Groupe
+    - 'section:6f5631e2-4590-4486-a207-c8f6d670e07e' # Tag
+  targetSiteId: null
+  validateRelatedElements: false
+  viewMode: list
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\Entries

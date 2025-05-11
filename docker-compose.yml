@@ -1,0 +1,51 @@
+services:
+  web:
+    image: gggu/gucraft:1 # Vous pouvez choisir une autre version de PHP si nécessaire (ex: 8.2-dev)
+    ports:
+      - "8080:8080" # Vous pouvez changer le port hôte (8080) si besoin
+    volumes:
+      - ./web:/app
+    depends_on:
+      - db
+    environment:
+      PHP_MEMORY_LIMIT: 512M
+      PHP_MAX_EXECUTION_TIME: 300
+      CRAFT_ENVIRONMENT: dev
+      CRAFT_DB_DRIVER: pgsql
+      CRAFT_DB_SERVER: db
+      CRAFT_DB_PORT: 5432
+      CRAFT_DB_DATABASE: db
+      CRAFT_DB_USER: db
+      CRAFT_DB_PASSWORD: db
+    networks:
+      - craft-network
+
+  db:
+    image: gggu/gudb:1 # Vous pouvez choisir une autre version de PostgreSQL
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: db
+      POSTGRES_PASSWORD: db
+      POSTGRES_DB: db
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    networks:
+      - craft-network
+
+  # console:
+  #   image: craftcms/cli:8.1-dev # Assurez-vous que la version correspond à celle de 'web'
+  #   volumes:
+  #     - ./web:/app
+  #   depends_on:
+  #     - db
+  #   entrypoint: ["./craft"]
+  #   networks:
+  #     - craft-network
+
+# volumes:
+#   db_data:
+
+networks:
+  craft-network:
+    driver: bridge

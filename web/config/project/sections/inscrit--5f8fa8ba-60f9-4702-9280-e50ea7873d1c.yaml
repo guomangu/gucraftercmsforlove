@@ -1,0 +1,33 @@
+defaultPlacement: end
+enableVersioning: true
+entryTypes:
+  -
+    uid: e7e2bc2d-2c59-46a3-85cf-c86fb4a033be # inscrit
+handle: inscrit
+maxAuthors: 1
+name: Inscrit
+previewTargets:
+  -
+    __assoc__:
+      -
+        - label
+        - 'Primary entry page'
+      -
+        - urlFormat
+        - '{url}'
+      -
+        - refresh
+        - '1'
+propagationMethod: all
+siteSettings:
+  03e942c5-fa2f-4d2a-b7e5-52766f07b3b2: # a
+    enabledByDefault: true
+    hasUrls: true
+    template: inscrit/_entry.twig
+    uriFormat: 'inscrit/{slug}'
+  a7c10eaa-616c-4edf-8aa6-2ddc2e17d921: # agendafriends
+    enabledByDefault: true
+    hasUrls: true
+    template: inscrit/_entry.twig
+    uriFormat: 'inscrit/{slug}'
+type: channel

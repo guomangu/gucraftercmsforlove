@@ -1,0 +1,170 @@
+{% block content %}
+
+
+{% if latestaction %}
+        {# Utilisation d'une carte pour présenter l'action principale #}
+        <div class="card mb-4 shadow-sm overflow-hidden"> {# overflow-hidden pour les coins arrondis de l'image #}
+            <div class="row g-0"> {# Pas d'espacement entre les colonnes de l'image et du texte #}
+                <a href="/b/{{ latestaction.id }}" class="col-md-5 col-lg-4"> {# Colonne pour l'image, taille différente sur md et lg #}
+                    {% set image = latestaction.img.one() %}
+                    {% if image %}
+                        {# Image responsive, couvre la hauteur possible #}
+                        <img src="{{ image.getUrl({width: 600, height: 450, mode: 'crop'}) }}" class="img-fluid h-100 object-fit-cover" alt="{{ image.title ?? latestaction.title }}">
+                    {% else %}
+                        {# Placeholder si pas d'image #}
+                        <div class="bg-secondary-subtle d-flex align-items-center justify-content-center h-100">
+                            <span class="text-muted p-3">Aucune image</span>
+                        </div>
+                    {% endif %}
+                </a>
+                <div class="col-md-7 col-lg-8"> {# Colonne pour le texte #}
+                    <div class="card-body">
+                        <h1 class="card-title h2">{{ latestaction.title }}</h1> {# Titre principal de l'action #}
+                        {# nl2br pour respecter les sauts de ligne de la description #}
+                        <p class="card-text lead">{{ latestaction.description|nl2br }}</p>
+
+                        <p class="card-text mb-1">
+                            {{ latestaction.city }} : "<strong>{{ latestaction.zone }}</strong>"
+                        </p>
+
+                        <div>
+                            {% include "x.twig" with {
+                                activ: latestaction,
+                                user: user
+                            } %}
+                        </div>
+                        {# Vous pouvez ajouter d'autres champs de 'latestaction' ici si nécessaire #}
+                        <hr>
+                        <p class="card-text mb-1">
+                            <small class="text-muted">
+                                Prochaine date
+                            </small>
+                        </p>
+                        <p class="card-text mb-1">
+                            <small class="text-muted">heure : </small><strong>{{ latestaction.moment[0].t }}h</strong>
+                        </p>
+
+
+
+                        {# --- Configuration et accès simplifié --- #}
+{% set moment = latestaction.moment[0] ?? null %} {# Accès sécurisé à l'objet moment #}
+
+{# --- Initialisation --- #}
+{% set nextOccurrenceDate = null %}
+{% set errorMessage = null %}
+{% set targetDescription = '' %} {# Pour le message final #}
+{% set now = "now" %} {# Référence à l'instant présent #}
+
+{% if moment is not null %}
+    {# --- Logique Principale : Déterminer le type (jour du mois ou jour de la semaine) --- #}
+
+    {% if moment.d is defined and moment.d is not null %}
+        {# === CAS 1 : Cible est un JOUR DU MOIS (.d) === #}
+        {% set targetDayOfMonth = moment.d %}
+        {% set recurrenceType = 'jour du mois' %}
+        {% set targetDescription = ' ' ~ targetDayOfMonth ~ ' du mois' %} {# Description pour l'affichage #}
+
+        {# --- Dates actuelles --- #}
+        {% set currentDayOfMonth = now|date("j") %}
+        {% set currentMonth = now|date("m") %}
+        {% set currentYear = now|date("Y") %}
+        {% set targetDayFormatted = "%02d"|format(targetDayOfMonth) %}
+
+        {# --- Calcul basé sur la comparaison (logique originale avec <=) --- #}
+        {% if currentDayOfMonth <= targetDayOfMonth %}
+            {# Si le jour actuel est avant ou égal au jour cible, la prochaine occurrence est ce mois-ci #}
+            {# Attention: Si aujourd'hui est le jour cible, le résultat sera aujourd'hui #}
+            {% set nextOccurrenceDateString = currentYear ~ '-' ~ currentMonth ~ '-' ~ targetDayFormatted %}
+            {% set nextOccurrenceDate = date(nextOccurrenceDateString) %}
+        {% else %}
+            {# Sinon (jour actuel > jour cible), la prochaine occurrence est le mois prochain #}
+            {% set firstDayOfCurrentMonth = date(currentYear ~ '-' ~ currentMonth ~ '-01') %}
+            {% set firstDayOfNextMonth = firstDayOfCurrentMonth|date_modify('+1 month') %}
+            {% set nextMonthYear = firstDayOfNextMonth|date("Y") %}
+            {% set nextMonthMonth = firstDayOfNextMonth|date("m") %}
+            {% set nextOccurrenceDateString = nextMonthYear ~ '-' ~ nextMonthMonth ~ '-' ~ targetDayFormatted %}
+            {% set nextOccurrenceDate = date(nextOccurrenceDateString) %}
+        {% endif %}
+
+    {% elseif moment.l is defined and moment.l is not null %}
+        {# === CAS 2 : Cible est un JOUR DE LA SEMAINE (.N) === #}
+        {% set targetDayOfWeek = moment.l %} {# ISO-8601: 1 (Lundi) à 7 (Dimanche) #}
+
+        {# Validation simple de N #}
+        {% if targetDayOfWeek >= 1 and targetDayOfWeek <= 7 %}
+            {% set recurrenceType = 'jour de la semaine' %}
+            {% set joursSemaineN = {1: 'Lundi', 2: 'Mardi', 3: 'Mercredi', 4: 'Jeudi', 5: 'Vendredi', 6: 'Samedi', 7: 'Dimanche'} %}
+            {% set targetDescription = ' ' ~ (joursSemaineN[targetDayOfWeek] ?? 'jour ' ~ targetDayOfWeek) %} {# Description pour l'affichage #}
+
+            {# --- Jour actuel de la semaine --- #}
+            {% set currentDayOfWeek = now|date("N") %}
+
+            {# --- Calcul du nombre de jours à ajouter --- #}
+            {% set dayDifference = targetDayOfWeek - currentDayOfWeek %}
+
+            {% if dayDifference <= 0 %}
+                {# Si le jour cible est aujourd'hui ou déjà passé cette semaine, on ajoute 7 jours pour aller à la semaine suivante #}
+                {% set daysToAdd = dayDifference + 7 %}
+            {% else %}
+                {# Si le jour cible est plus tard dans la semaine #}
+                {% set daysToAdd = dayDifference %}
+            {% endif %}
+
+            {# --- Calcul de la date finale --- #}
+            {% set nextOccurrenceDate = date(now)|date_modify("+" ~ daysToAdd ~ " days") %}
+        {% else %}
+            {% set errorMessage = "Jour de la semaine cible (.l = " ~ moment.N ~ ") invalide. Doit être entre 1 et 7." %}
+        {% endif %}
+
+    {% else %}
+        {# === CAS 3 : Ni .d ni .N défini dans moment === #}
+        {% set errorMessage = "Impossible de déterminer la cible : ni '.d' ni '.l' trouvé dans latestaction.moment[0]." %}
+    {% endif %} {# Fin de la condition if moment.d / elseif moment.N #}
+
+{% else %}
+     {% set errorMessage = "Donnée 'latestaction.moment[0]' non disponible." %}
+{% endif %} {# Fin de la condition if moment is not null #}
+                       
+
+
+                        <p class="card-text mb-1">
+                            <small class="text-muted">jour : </small><strong>{{ nextOccurrenceDate|date("l d F") }}</strong>
+                        </p>
+
+                        {# <hr>
+
+                        {% include "i.twig" with {
+                            act: latestaction,
+                            dt: nextOccurrenceDate
+                        } %} #}
+                    </div>
+
+                     {# <div class="">
+                    {% include "d.twig" with {
+                        obj: latestaction,
+                        user: user
+                    } %}
+                    </div> #}
+                </div>
+            </div>
+        </div>
+
+    {# <div class="container">
+        {% include "q.twig" with {
+            action: latestaction,
+            dt: nextOccurrenceDate
+        } %}
+    </div>
+
+    <div class="container"> 
+        <h2 class="mt-5 mb-4">Articles Associés</h2> 
+
+        {% include "e.twig" with {
+            obj: latestaction,
+            user: user
+        } %}
+
+    </div> #}
+{% endif %}
+
+{% endblock %}

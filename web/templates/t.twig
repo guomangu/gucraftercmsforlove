@@ -1,0 +1,84 @@
+{% block content %}
+{% set latesttag = craft.entries()
+.section('tag')
+.relatedTo({
+    targetElement: user,
+    field: 'gens'
+})
+.limit(9)
+.all() %}
+
+<div style="place-self: center;">
+{% set groupess = [] %}
+{% for tag in latesttag %}
+    <span class="btn btn-primary">{{tag.title}}</span>
+
+    {% set liketag = craft.entries()
+    .section('tag')
+    .where(['like', 'title', tag.title])
+    .orderBy('dateCreated DESC')
+    .limit(7)
+    .all() %}
+
+    {% if liketag|length > 0 %}
+        {% for tagg in liketag %}
+            {% set othergroupe = tagg.groupe %}
+                {% for g in othergroupe %}
+                    {% set groupess = groupess|merge([g]) %}
+                {% endfor %}
+        {% endfor %}
+    {% endif %}
+{% endfor %}
+</div>
+{# <pre>
+    {{ dump(groupess) }}
+</pre> #}
+
+{# {{ groupess|length }} #}
+{% set uniqueArray = [] %}
+{% set tempIdentifiers = [] %}
+
+{% if groupess|length > 1 %}
+    {% for object in groupess %}
+        {% set identifier = object.id %} {# Ou une autre propriété unique #}
+        {% if identifier not in tempIdentifiers %}
+            {% set uniqueArray = uniqueArray|merge([object]) %}
+            {% set tempIdentifiers = tempIdentifiers|merge([identifier]) %}
+        {% endif %}
+    {% endfor %}
+    {# {{ uniqueArray|length }} #}
+    {% set groupess = uniqueArray %}
+{% endif %}
+{# <pre>
+    {{ dump(groupess) }}
+</pre> #}
+
+
+
+<br>
+<p>Agendas trouvés :</p>
+
+
+{% for g in groupess %}
+    <a class="btn btn-outline-primary" href="/m/{{g.id}}">
+        {{g.title}}
+        <small class="text-muted">
+            {% include "x.twig" with {
+                activ: g
+            } %}
+        </small>
+    </a>
+{% endfor %}
+
+
+
+
+
+
+<hr>
+{% include "mm.twig" with {
+    user:user,
+    groupess: groupess
+} %}
+<hr>
+{% endblock %}
