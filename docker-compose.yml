@@ -2,7 +2,7 @@ services:
   web:
     image: gggu/gucraft:v2 # Vous pouvez choisir une autre version de PHP si nécessaire (ex: 8.2-dev)
     ports:
-      - "8080:8080" # Vous pouvez changer le port hôte (8080) si besoin
+      - "80:8080" # Vous pouvez changer le port hôte (8080) si besoin
     volumes:
       - ./web:/app
     depends_on:
