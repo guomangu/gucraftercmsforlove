@@ -1,4 +1,4 @@
-dateModified: 1746941356
+dateModified: 1747085818
 email:
   fromEmail: aluligu@gmail.com
   fromName: a
@@ -10,7 +10,7 @@ fs:
     settings:
       path: $DOCUMENT_ROOT/imgs
     type: craft\fs\Local
-    url: '//localhost:8080/imgs'
+    url: '//localhost:80/imgs'
 meta:
   __names__:
     0d874f90-596b-4955-b5f0-c6c493421528: imgsvol # imgsvol
